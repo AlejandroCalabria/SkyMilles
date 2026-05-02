@@ -1,9 +1,6 @@
 # Build directories
-/build/
-/dist/
 
 # NetBeans project files (remove if team doesn't use NetBeans)
-/nbproject/
 
 # Compiled class files
 *.class
@@ -18,7 +15,6 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.nar
 *.ear

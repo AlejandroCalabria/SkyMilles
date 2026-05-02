@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ValoresElementos" language="groovy" pageWidth="283" pageHeight="283" columnWidth="283" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e54a44c2-aa69-4273-b5ae-7984eb860eaf">
+	<property name="ireport.zoom" value="2.1435888100000016"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="codigo" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[23]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT * FROM tabelanutricional as B INNER JOIN tabnutelemento as C INNER JOIN elemento as f on b.tabCodigo = c.tabCodigo and c.eleCodigo = f.eleCodigo and b.tabCodigo = $P{codigo} order by b.tabCodigo ASC, f.eleOrdem ASC]]>
+	</queryString>
+	<field name="tabCodigo" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tabValorEnergetico" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tabVD" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tabPorcao" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="proCodigo" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="undCodigo" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tabTotalPorcao" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tabValor" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tabValorEnergeticoPorcao" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tneCodigo" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="eleCodigo" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tneValor" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tneVD" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tneValorPadrao" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="eleNome" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="eleOrdem" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<sortField name="tabCodigo_COUNT" type="Variable"/>
+	<group name="tabCodigo">
+		<groupExpression><![CDATA[$F{tabCodigo}]]></groupExpression>
+	</group>
+	<group name="tab">
+		<groupExpression><![CDATA[$F{tabCodigo}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="156" height="20" uuid="08958296-c4c0-468b-bfdd-8e9eb6149976"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{eleNome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="241" y="0" width="42" height="20" uuid="f88b0e62-3395-43b6-ab75-079fb754e689"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{tneVD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="156" y="0" width="42" height="20" uuid="d10701b9-d3b7-4581-bd0f-e3ca313a5a7b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{tneValorPadrao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="199" y="0" width="42" height="20" uuid="f85323d1-570e-49af-b4bd-1c1cdd9f9369"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{tneValor}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="241" y="0" width="1" height="20" uuid="5606bfa7-a41a-484d-b415-b21e21484b35"/>
+			</line>
+			<line>
+				<reportElement x="198" y="1" width="1" height="19" uuid="cdab5d0d-152c-444f-9e7e-b6960dc29f23"/>
+			</line>
+			<line>
+				<reportElement x="155" y="0" width="1" height="20" uuid="178473dc-98d4-49dc-8499-284ac5f63197"/>
+			</line>
+			<line>
+				<reportElement x="0" y="0" width="283" height="1" uuid="016fe23d-1688-4e5c-a13b-156f8b26a16a"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
