@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora Nutricional</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <style>
+        /* Autocomplete */
+        .ac-wrap { position: relative; }
+        .ac-list {
+            display: none; position: absolute; z-index: 9999;
+            background: #fff; border: 1px solid #ccc;
+            border-radius: 0 0 6px 6px; max-height: 200px;
+            overflow-y: auto; width: 100%;
+            box-shadow: 0 4px 12px rgba(0,0,0,.15);
+        }
+        .ac-item {
+            padding: 7px 12px; cursor: pointer;
+            font-size: 13px; border-bottom: 1px solid #f0f0f0;
+        }
+        .ac-item:hover { background: #0d6efd; color: #fff; }
+        .ac-cat { font-size: 11px; opacity: .6; margin-left: 6px; }
+        .ac-found { font-size: 11px; color: #198754; margin-top: 2px; }
+
+        /* Rótulo ANVISA */
+        .rotulo-anvisa {
+            width: 100%; max-width: 380px;
+            border: 3px solid #000; background: #fff;
+            color: #000; font-family: Arial, Helvetica, sans-serif;
+            font-size: 13px;
+        }
+        .rotulo-anvisa .r-titulo {
+            font-size: 20px; font-weight: 900;
+            padding: 4px 8px 3px; border-bottom: 8px solid #000; line-height: 1.1;
+        }
+        .rotulo-anvisa .r-porcao-bloco {
+            padding: 4px 8px; border-bottom: 1px solid #000;
+            font-size: 12px; overflow: hidden;
+        }
+        .rotulo-anvisa .r-porcao-valor { font-size: 16px; font-weight: 900; }
+        .rotulo-anvisa .r-total-porcoes { font-size: 11px; float: right; }
+        .rotulo-anvisa .r-divisor-grosso { border-top: 8px solid #000; }
+        .rotulo-anvisa .r-divisor-medio  { border-top: 4px solid #000; }
+        .rotulo-anvisa .r-header-colunas {
+            display: flex; justify-content: flex-end;
+            gap: 20px; padding: 2px 8px;
+            font-size: 10px; font-weight: 700; border-bottom: 1px solid #000;
+        }
+        .rotulo-anvisa .r-energia-bloco {
+            display: flex; justify-content: space-between;
+            align-items: baseline; padding: 3px 8px; gap: 8px;
+        }
+        .rotulo-anvisa .r-energia-label { font-size: 12px; font-weight: 700; flex: 1; }
+        .rotulo-anvisa .r-energia-valor { font-size: 17px; font-weight: 900; }
+        .rotulo-anvisa .r-energia-vd { font-size: 11px; min-width: 40px; text-align: right; }
+        .rotulo-anvisa .r-nutriente {
+            display: flex; justify-content: space-between;
+            align-items: center; padding: 2px 8px;
+            border-bottom: 1px solid #000; font-size: 12px; gap: 4px;
+        }
+        .rotulo-anvisa .r-nutriente .r-nome  { flex: 1; }
+        .rotulo-anvisa .r-nutriente .r-valor { min-width: 55px; text-align: right; font-weight: 700; }
+        .rotulo-anvisa .r-nutriente .r-vd    { min-width: 40px; text-align: right; }
+        .rotulo-anvisa .r-rodape {
+            padding: 4px 8px; font-size: 9px;
+            line-height: 1.4; border-top: 4px solid #000;
+        }
+
+        /* Linha de ingrediente */
+        .ing-row { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px; }
+        .ing-nome { flex: 2; }
+        .ing-qtd  { flex: 1; }
+        .ing-del  { flex: 0 0 36px; padding-top: 1px; }
+    </style>
+</head>
+<body class="main-layout">
+
+<div class="loader_bg">
+    <div class="loader"><img th:src="@{/images/loading.gif}" alt="#"></div>
+</div>
+
+<div th:replace="~{menu :: menu}"></div>
+
+<div class="three_box">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box_text">
+
+                    <h3>Calculadora Nutricional
+                        <small style="font-size:14px; color:#888; font-weight:normal;">(Tabela TACO)</small>
+                    </h3>
+                    <p class="text-muted mb-3">Insira os ingredientes, a porção e calcule o rótulo ANVISA automaticamente.</p>
+
+                    <div class="row">
+
+                        <!-- ══ COLUNA ESQUERDA: FORMULÁRIO ══ -->
+                        <div class="col-md-6">
+
+                            <h5>Dados do Produto</h5>
+
+                            <div class="mb-2">
+                                <label class="form-label mb-1">Produto *</label>
+                                <select id="produtoId" class="form-select form-select-sm">
+                                    <option value="">Selecione um produto...</option>
+                                    <option th:each="p : ${produtos}"
+                                            th:value="${p.proCodigo}"
+                                            th:text="${p.proNome}"></option>
+                                </select>
+                            </div>
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-4">
+                                    <label class="form-label mb-1">Porção (g/ml) *</label>
+                                    <input type="number" id="porcao" class="form-control form-control-sm"
+                                           value="100" min="1" step="0.1">
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label mb-1">Unidade</label>
+                                    <select id="unidadeId" class="form-select form-select-sm">
+                                        <option value="">—</option>
+                                        <option th:each="u : ${unidades}"
+                                                th:value="${u.undCodigo}"
+                                                th:text="${u.undNome}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label mb-1">Porções/embalagem</label>
+                                    <input type="number" id="totalPorcoes" class="form-control form-control-sm"
+                                           value="1" min="1" step="1">
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label mb-1">Colheres/Copos</label>
+                                    <input type="number" id="totalColheres" class="form-control form-control-sm"
+                                           value="0" min="0" step="0.5">
+                                </div>
+                            </div>
+
+                            <hr class="my-3">
+
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0">Ingredientes</h5>
+                                <button type="button" class="btn btn-sm btn-outline-success"
+                                        onclick="adicionarIngrediente()">
+                                    <i class="fa fa-plus"></i> Adicionar
+                                </button>
+                            </div>
+
+                            <div id="ingredientes-container"></div>
+
+                            <div id="msg-erro" class="alert alert-danger mt-2" style="display:none;"></div>
+
+                            <div class="mt-3 d-flex gap-2 flex-wrap">
+                                <button type="button" class="btn btn-primary" onclick="calcular()">
+                                    <i class="fa fa-calculator"></i> Calcular Rótulo
+                                </button>
+                                <button type="button" id="btn-salvar" class="btn btn-success"
+                                        style="display:none;" onclick="salvar()">
+                                    <i class="fa fa-save"></i> Salvar
+                                </button>
+                                <a th:href="@{/tabela}" class="btn btn-secondary">Voltar</a>
+                            </div>
+
+                        </div><!-- col esquerda -->
+
+                        <!-- ══ COLUNA DIREITA: RÓTULO ══ -->
+                        <div class="col-md-6">
+                            <div id="rotulo-preview" style="display:none;">
+                                <h5>Rótulo ANVISA</h5>
+                                <div class="rotulo-anvisa">
+
+                                    <div class="r-titulo">Informação Nutricional</div>
+
+                                    <div class="r-porcao-bloco">
+                                        <span class="r-total-porcoes">
+                                            Porções por embalagem:
+                                            <strong id="rv-totalPorcoes">—</strong>
+                                        </span>
+                                        Porção de
+                                        <span class="r-porcao-valor" id="rv-porcao">—</span>
+                                        <span id="rv-unidade"></span>
+                                        <div id="rv-colheres" style="font-size:11px; clear:both;"></div>
+                                    </div>
+
+                                    <div class="r-divisor-grosso"></div>
+
+                                    <div class="r-header-colunas">
+                                        <span>Qtd por porção</span>
+                                        <span>%VD*</span>
+                                    </div>
+
+                                    <div class="r-energia-bloco">
+                                        <span class="r-energia-label">Valor Energético</span>
+                                        <span class="r-energia-valor">
+                                            <span id="rv-energia">—</span> kcal
+                                        </span>
+                                        <span class="r-energia-vd">
+                                            <strong id="rv-vdEnergia">**</strong>
+                                        </span>
+                                    </div>
+
+                                    <div class="r-divisor-medio"></div>
+
+                                    <div class="r-nutriente">
+                                        <span class="r-nome"><strong>Carboidratos</strong></span>
+                                        <span class="r-valor"><span id="rv-carb">—</span> g</span>
+                                        <span class="r-vd" id="rv-vdCarb">**</span>
+                                    </div>
+                                    <div class="r-nutriente" style="padding-left:16px;">
+                                        <span class="r-nome">Açúcares Totais</span>
+                                        <span class="r-valor">— g</span>
+                                        <span class="r-vd">**</span>
+                                    </div>
+                                    <div class="r-nutriente" style="padding-left:16px;">
+                                        <span class="r-nome">Açúcares Adicionados</span>
+                                        <span class="r-valor">— g</span>
+                                        <span class="r-vd">**</span>
+                                    </div>
+                                    <div class="r-nutriente">
+                                        <span class="r-nome"><strong>Proteínas</strong></span>
+                                        <span class="r-valor"><span id="rv-prot">—</span> g</span>
+                                        <span class="r-vd" id="rv-vdProt">**</span>
+                                    </div>
+                                    <div class="r-nutriente">
+                                        <span class="r-nome"><strong>Gorduras Totais</strong></span>
+                                        <span class="r-valor"><span id="rv-lip">—</span> g</span>
+                                        <span class="r-vd" id="rv-vdLip">**</span>
+                                    </div>
+                                    <div class="r-nutriente" style="padding-left:16px;">
+                                        <span class="r-nome">Gorduras Saturadas</span>
+                                        <span class="r-valor"><span id="rv-sat">—</span> g</span>
+                                        <span class="r-vd" id="rv-vdSat">**</span>
+                                    </div>
+                                    <div class="r-nutriente" style="padding-left:16px;">
+                                        <span class="r-nome">Gorduras Trans</span>
+                                        <span class="r-valor">0 g</span>
+                                        <span class="r-vd">**</span>
+                                    </div>
+                                    <div class="r-nutriente">
+                                        <span class="r-nome"><strong>Fibra Alimentar</strong></span>
+                                        <span class="r-valor"><span id="rv-fibra">—</span> g</span>
+                                        <span class="r-vd" id="rv-vdFibra">**</span>
+                                    </div>
+                                    <div class="r-nutriente">
+                                        <span class="r-nome"><strong>Sódio</strong></span>
+                                        <span class="r-valor"><span id="rv-sodio">—</span> mg</span>
+                                        <span class="r-vd" id="rv-vdSodio">**</span>
+                                    </div>
+
+                                    <div class="r-rodape">
+                                        * Percentual de Valores Diários fornecidos pela porção.<br>
+                                        ** VD não estabelecido.<br>
+                                        Valores Diários de referência com base em uma dieta de 2000 kcal ou 8400 kJ.
+                                    </div>
+
+                                </div><!-- rotulo-anvisa -->
+                            </div><!-- rotulo-preview -->
+                        </div><!-- col direita -->
+
+                    </div><!-- row -->
+
+                </div><!-- box_text -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Form oculto para POST salvar -->
+<form id="form-salvar" th:action="@{/calculadora/salvar}" method="post" style="display:none;">
+    <input type="hidden" name="produtoId"        id="fs-produtoId">
+    <input type="hidden" name="unidadeId"        id="fs-unidadeId">
+    <input type="hidden" name="porcao"           id="fs-porcao">
+    <input type="hidden" name="totalPorcoes"     id="fs-totalPorcoes">
+    <input type="hidden" name="totalColheres"    id="fs-totalColheres">
+    <input type="hidden" name="ingredientesJson" id="fs-ingredientesJson">
+</form>
+
+<div th:replace="~{rodape :: rodape}"></div>
+
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script>
+$(window).on('load', function () { $('.loader_bg').fadeOut('slow'); });
+
+/* ── Carrega TACO ── */
+let tacoData = [];
+fetch('/calculadora/taco-dados')
+    .then(r => r.json())
+    .then(data => { tacoData = data; })
+    .catch(() => console.warn('Erro ao carregar TACO'));
+
+/* ── Ingredientes ── */
+let contIdx = 0;
+
+function adicionarIngrediente() {
+    const idx = contIdx++;
+    const row = document.createElement('div');
+    row.className = 'ing-row';
+    row.id = 'ing-row-' + idx;
+    row.innerHTML = `
+        <div class="ing-nome ac-wrap">
+            <input type="text" class="form-control form-control-sm"
+                   id="ing-nome-${idx}" placeholder="Digite o ingrediente..."
+                   autocomplete="off">
+            <div class="ac-list" id="ac-list-${idx}"></div>
+            <div id="ac-info-${idx}" class="ac-found"></div>
+        </div>
+        <div class="ing-qtd">
+            <input type="number" class="form-control form-control-sm"
+                   id="ing-qtd-${idx}" placeholder="g/ml" min="0.1" step="0.1">
+        </div>
+        <div class="ing-del">
+            <button type="button" class="btn btn-sm btn-outline-danger"
+                    onclick="remover(${idx})">
+                <i class="fa fa-trash"></i>
+            </button>
+        </div>`;
+    document.getElementById('ingredientes-container').appendChild(row);
+
+    const input = document.getElementById('ing-nome-' + idx);
+    const list  = document.getElementById('ac-list-'  + idx);
+    const info  = document.getElementById('ac-info-'  + idx);
+
+    input.addEventListener('input', function () {
+        const val = normalizar(this.value);
+        list.innerHTML = '';
+        if (val.length < 2) { list.style.display = 'none'; return; }
+
+        const tokens = val.split(/\s+/);
+        let matches = tacoData.filter(item =>
+            tokens.every(t => normalizar(item.descricao).includes(t))
+        );
+        matches.sort((a, b) => {
+            const da = normalizar(a.descricao), db = normalizar(b.descricao);
+            if (da.startsWith(val)) return -1;
+            if (db.startsWith(val)) return 1;
+            return a.descricao.localeCompare(b.descricao);
+        });
+
+        if (!matches.length) { list.style.display = 'none'; return; }
+
+        matches.slice(0, 10).forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'ac-item';
+            div.innerHTML = item.descricao +
+                '<span class="ac-cat">[' + item.categoria + ']</span>';
+            div.onclick = () => {
+                input.value = item.descricao;
+                list.style.display = 'none';
+                info.textContent = '✔ ' + item.energia + ' kcal/100g';
+            };
+            list.appendChild(div);
+        });
+        list.style.display = 'block';
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!list.contains(e.target) && e.target !== input)
+            list.style.display = 'none';
+    });
+}
+
+function remover(idx) {
+    const r = document.getElementById('ing-row-' + idx);
+    if (r) r.remove();
+}
+
+function normalizar(s) {
+    return s.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[-,.]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/* ── Coleta ingredientes ── */
+function coletarIngredientes() {
+    const lista = [];
+    document.querySelectorAll('.ing-row').forEach(row => {
+        const idx  = row.id.replace('ing-row-', '');
+        const nome = (document.getElementById('ing-nome-' + idx) || {}).value || '';
+        const qtd  = parseFloat((document.getElementById('ing-qtd-'  + idx) || {}).value) || 0;
+        if (nome.trim() && qtd > 0) lista.push({ nome: nome.trim(), quantidade: qtd });
+    });
+    return lista;
+}
+
+/* ── Calcular (AJAX) ── */
+function calcular() {
+    const ingredientes = coletarIngredientes();
+    if (!ingredientes.length) {
+        mostrarErro('Adicione pelo menos um ingrediente com quantidade.');
+        return;
+    }
+    const porcao = parseFloat(document.getElementById('porcao').value) || 100;
+
+    fetch('/calculadora/calcular?porcao=' + porcao, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(ingredientes)
+    })
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(v => {
+        preencherRotulo(v, porcao);
+        document.getElementById('rotulo-preview').style.display = 'block';
+        document.getElementById('btn-salvar').style.display = 'inline-block';
+        esconderErro();
+    })
+    .catch(err => mostrarErro('Erro ao calcular. Verifique os ingredientes. (' + err.message + ')'));
+}
+
+function preencherRotulo(v, porcao) {
+    const sel     = document.getElementById('unidadeId');
+    const undNome = sel.options[sel.selectedIndex]?.text || '';
+
+    set('rv-porcao',       porcao);
+    set('rv-unidade',      undNome === '—' ? '' : undNome);
+    set('rv-totalPorcoes', document.getElementById('totalPorcoes').value || '—');
+
+    const col = parseFloat(document.getElementById('totalColheres').value) || 0;
+    set('rv-colheres', col > 0 ? '(' + col + ' colher(es)/copo(s))' : '');
+
+    set('rv-energia',   v.energiaPorcao);
+    set('rv-vdEnergia', v.vdEnergia > 0 ? v.vdEnergia + '%' : '**');
+    set('rv-carb',      v.carboidratoPorcao);
+    set('rv-vdCarb',    v.vdCarb   > 0 ? v.vdCarb   + '%' : '**');
+    set('rv-prot',      v.proteinaPorcao);
+    set('rv-vdProt',    v.vdProt   > 0 ? v.vdProt   + '%' : '**');
+    set('rv-lip',       v.lipideosPorcao);
+    set('rv-vdLip',     v.vdLip    > 0 ? v.vdLip    + '%' : '**');
+    set('rv-sat',       v.saturadoPorcao);
+    set('rv-vdSat',     v.vdSat    > 0 ? v.vdSat    + '%' : '**');
+    set('rv-fibra',     v.fibraPorcao);
+    set('rv-vdFibra',   v.vdFibra  > 0 ? v.vdFibra  + '%' : '**');
+    set('rv-sodio',     v.sodioPorcao);
+    set('rv-vdSodio',   v.vdSodio  > 0 ? v.vdSodio  + '%' : '**');
+}
+
+function set(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+}
+
+/* ── Salvar ── */
+function salvar() {
+    const produtoId = document.getElementById('produtoId').value;
+    if (!produtoId) { mostrarErro('Selecione um produto antes de salvar.'); return; }
+
+    const ingredientes = coletarIngredientes();
+    if (!ingredientes.length) { mostrarErro('Adicione ingredientes.'); return; }
+
+    document.getElementById('fs-produtoId').value       = produtoId;
+    document.getElementById('fs-unidadeId').value       = document.getElementById('unidadeId').value;
+    document.getElementById('fs-porcao').value          = document.getElementById('porcao').value;
+    document.getElementById('fs-totalPorcoes').value    = document.getElementById('totalPorcoes').value;
+    document.getElementById('fs-totalColheres').value   = document.getElementById('totalColheres').value;
+    document.getElementById('fs-ingredientesJson').value = JSON.stringify(ingredientes);
+
+    document.getElementById('form-salvar').submit();
+}
+
+function mostrarErro(msg) {
+    const el = document.getElementById('msg-erro');
+    el.textContent = msg;
+    el.style.display = 'block';
+}
+function esconderErro() {
+    document.getElementById('msg-erro').style.display = 'none';
+}
+
+// Inicia com 1 ingrediente vazio
+adicionarIngrediente();
+</script>
+</body>
+</html>

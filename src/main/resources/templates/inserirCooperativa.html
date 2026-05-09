@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutri - IFTM</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/jquery.mCustomScrollbar.min.css}">
+</head>
+
+<body class="main-layout">
+
+<div class="loader_bg">
+    <div class="loader"><img th:src="@{/images/loading.gif}" alt="#"/></div>
+</div>
+
+<div th:replace="~{menu :: menu}"></div>
+
+<div class="three_box">
+    <div class="container">
+
+        <!-- FORM -->
+        <div class="row">
+            <div class="col-md-12">
+                <br><br><br><br>
+
+                <div class="box_text">
+                    <h1>Gerenciamento de Cooperativa</h1>
+
+                    <form th:action="@{/inserirCooperativa}" method="post">
+                        <table width="100%">
+                            <tr>
+                                <th width="30%">Cooperativa</th>
+                                <th width="30%">Endereço</th>
+                                <th width="20%">CNPJ</th>
+                                <th width="20%">Cidade</th>
+                                <th width="20%">Ações</th>
+                            </tr>
+
+                            <tr>
+                                <td><input name="coo" type="text"></td>
+                                <td><input name="end" type="text"></td>
+                                <td><input name="cnpj" type="text"></td>
+                                <td><input name="cid" type="text"></td>
+                                <td><input type="submit" value="Inserir nova cooperativa"></td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <br><br><br>
+
+        <!-- LISTAGEM -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box_text">
+                    <table width="100%">
+                        <thead>
+                        <tr>
+                            <th width="5%">Códigos</th>
+                            <th width="30%">Cooperativa</th>
+                            <th width="30%">Endereço</th>
+                            <th width="20%">CNPJ</th>
+                            <th width="20%">Cidade</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:each="c : ${cooperativas}">
+                            <td th:text="${c.cooCodigo}"></td>
+                            <td th:text="${c.cooNome}"></td>
+                            <td th:text="${c.cooEndereco}"></td>
+                            <td th:text="${c.cooCNPJ}"></td>
+                            <td th:text="${c.cooCidade}"></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="5">
+                                <div class="cooperative-actions">
+                                    <a th:href="@{/inserirCooperativa}" class="btn btn-secondary btn-sm">Nova Cooperativa</a>
+                                    <a th:href="@{/alterarCooperativa}" class="btn btn-secondary btn-sm">Editar Cooperativas</a>
+                                    <a th:href="@{/removerCooperativa}" class="btn btn-secondary-remove btn-sm">Remover Cooperativa</a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<footer>
+    <div th:replace="rodape :: rodape"></div>
+</footer>
+
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/popper.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/jquery-3.0.0.min.js}"></script>
+<script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}"></script>
+<script th:src="@{/js/custom.js}"></script>
+
+</body>
+</html>

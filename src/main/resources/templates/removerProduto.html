@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Remover Produto</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="main-layout">
+
+<div th:replace="~{menu :: menu}"></div>
+
+<div class="container mt-5">
+
+    <h1>Remover Produto</h1>
+
+    <div class="alert alert-danger">
+
+        <h4>
+            Tem certeza que deseja remover este produto?
+        </h4>
+
+        <hr>
+
+        <p>
+            <strong>Código:</strong>
+            <span th:text="${produto.proCodigo}"></span>
+        </p>
+
+        <p>
+            <strong>Nome:</strong>
+            <span th:text="${produto.proNome}"></span>
+        </p>
+
+        <p>
+            <strong>Fabricante:</strong>
+
+            <span th:text="${produto.fabricante != null ? produto.fabricante.fabNome : 'Sem fabricante'}"></span>
+        </p>
+
+    </div>
+
+    <form th:action="@{/produtos/remover/{id}(id=${produto.proCodigo})}"
+          method="post">
+
+        <button type="submit"
+                class="btn btn-danger">
+            Confirmar Remoção
+        </button>
+
+        <a th:href="@{/produtos}"
+           class="btn btn-secondary">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>
+
+<footer class="mt-5">
+    <div th:replace="~{rodape :: rodape}"></div>
+</footer>
+
+</body>
+</html>

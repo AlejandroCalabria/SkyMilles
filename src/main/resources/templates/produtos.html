@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Nutri - IFTM</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/jquery.mCustomScrollbar.min.css}">
+</head>
+
+<body class="main-layout">
+
+    <!-- Loader -->
+    <div class="loader_bg">
+        <div class="loader">
+            <img th:src="@{/images/loading.gif}" alt="#">
+        </div>
+    </div>
+
+    <!-- Menu -->
+    <div th:replace="~{menu :: menu}"></div>
+
+    <!-- Conteúdo -->
+    <div class="three_box">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-md-12">
+
+                    <br><br><br><br>
+
+                    <div class="box_text">
+
+                        <h1>Produtos Cadastrados</h1>
+
+                        <table class="table table-bordered table-striped">
+
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nome</th>
+                                    <th>Nome Fantasia</th>
+                                    <th>Fabricante</th>
+                                    <th>Fabricação</th>
+                                    <th>Vencimento</th>
+                                    <th>Peso</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <!-- Lista de produtos -->
+                                <tr th:each="p : ${produtos}">
+
+                                    <td th:text="${p.proCodigo}"></td>
+
+                                    <td th:text="${p.proNome}"></td>
+
+                                    <td th:text="${p.proNomeFantasia}"></td>
+
+                                    <td th:text="${p.fabricante != null ? p.fabricante.fabNome : 'Sem fabricante'}"></td>
+
+                                    <td th:text="${#temporals.format(p.proDataFabricacao, 'dd/MM/yyyy')}"></td>
+
+                                    <td th:text="${#temporals.format(p.proDataVencimento, 'dd/MM/yyyy')}"></td>
+
+                                    <td th:text="${p.proPeso} + ' kg'"></td>
+
+                                    <td>
+
+                                        <!-- ALTERAR -->
+                                        <a th:href="@{/produtos/alterar/{id}(id=${p.proCodigo})}"
+                                           class="btn btn-secondary btn-sm">
+                                            Alterar
+                                        </a>
+
+                                        <!-- REMOVER -->
+                                        <a th:href="@{/produtos/remover/{id}(id=${p.proCodigo})}"
+                                           class="btn btn-danger btn-sm">
+                                            Remover
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                                <!-- Caso vazio -->
+                                <tr th:if="${#lists.isEmpty(produtos)}">
+                                    <td colspan="8" class="text-center">
+                                        Nenhum produto cadastrado.
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                        <br>
+
+                        <!-- Botão inserir -->
+                        <a th:href="@{/produtos/inserir}"
+                           class="btn btn-primary">
+                            Inserir Novo Produto
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer>
+        <div th:replace="~{rodape :: rodape}"></div>
+    </footer>
+
+    <!-- JS -->
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/popper.min.js}"></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}"></script>
+    <script th:src="@{/js/custom.js}"></script>
+
+</body>
+
+</html>

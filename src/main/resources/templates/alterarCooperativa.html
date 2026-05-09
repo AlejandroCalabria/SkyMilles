@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nutri - IFTM</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+</head>
+
+<body class="main-layout">
+
+<div class="loader_bg">
+    <div class="loader"><img src="images/loading.gif" alt="#"></div>
+</div>
+
+<!-- MENU (substituir depois por fragmento Thymeleaf) -->
+<!-- <div th:replace="fragments/menu :: menu"></div> -->
+
+<div class="three_box">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+
+                <br><br><br><br>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="box_text">
+
+                            <h1>Alterar informações da Cooperativa</h1>
+
+                            <form action="#" method="post">
+                                <table width="100%">
+                                    <tr>
+                                        <th width="5%">Códigos</th>
+                                        <th width="20%">Cooperativas</th>
+                                        <th width="50%">CNPJ</th>
+                                        <th width="25%">Endereços</th>
+                                        <th width="25%">Cidades</th>
+                                    </tr>
+
+                                    <!-- EXEMPLO ESTÁTICO (depois vira Thymeleaf) -->
+                                    <tr>
+                                        <td>1</td>
+                                        <td><input type="text" value="Cooperativa Exemplo"></td>
+                                        <td><input type="text" value="00.000.000/0001-00"></td>
+                                        <td><input type="text" value="Endereço exemplo"></td>
+                                        <td><input type="text" value="Cidade exemplo"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="5">
+                                            <input type="submit" value="Alterar dados das cooperativas">
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="5">
+                                            <div class="cooperative-actions">
+                                                <a href="inserirCooperativa.html" class="btn btn-secondary btn-sm">
+                                                    Nova Cooperativa
+                                                </a>
+                                                <a href="alterarCooperativa.html" class="btn btn-secondary btn-sm">
+                                                    Editar Cooperativas
+                                                </a>
+                                                <a href="removerCooperativa.html" class="btn btn-secondary-remove btn-sm">
+                                                    Remover Cooperativa
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- RODAPÉ -->
+<!-- <div th:replace="fragments/rodape :: rodape"></div> -->
+
+<script src="js/jquery.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/jquery-3.0.0.min.js"></script>
+<script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="js/custom.js"></script>
+
+</body>
+</html>

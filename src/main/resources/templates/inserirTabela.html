@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Inserir Tabela</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+
+<body>
+
+<div th:replace="~{menu :: menu}"></div>
+
+<div class="container mt-5">
+
+    <h1>Inserir Tabela Nutricional</h1>
+
+    <form th:action="@{/tabela/salvar}" method="post">
+
+        <div class="mb-3">
+
+            <label>Produto</label>
+
+            <select name="produto.proCodigo"
+                    class="form-control"
+                    required>
+
+                <option value="">Selecione</option>
+
+                <option th:each="p : ${produtos}"
+                        th:value="${p.proCodigo}"
+                        th:text="${p.proNome}">
+                </option>
+
+            </select>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label>Valor Energético</label>
+
+            <input type="number"
+                   step="0.01"
+                   name="tabValorEnergetico"
+                   class="form-control"
+                   required>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label>Porção</label>
+
+            <input type="number"
+                   step="0.01"
+                   name="tabPorcao"
+                   class="form-control"
+                   required>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label>Unidade de Medida</label>
+
+            <select name="unidadeMedida.undCodigo"
+                    class="form-control"
+                    required>
+
+                <option value="">Selecione</option>
+
+                <option th:each="u : ${unidades}"
+                        th:value="${u.undCodigo}"
+                        th:text="${u.undNome}">
+                </option>
+
+            </select>
+
+        </div>
+
+        <button type="submit" class="btn btn-success">
+            Inserir
+        </button>
+
+        <a th:href="@{/tabela}" class="btn btn-secondary">
+            Voltar
+        </a>
+
+    </form>
+
+</div>
+
+<div th:replace="~{rodape :: rodape}"></div>
+
+</body>
+</html>

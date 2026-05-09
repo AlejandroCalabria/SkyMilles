@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Nutri - IFTM</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+</head>
+
+<body class="main-layout">
+
+<div th:replace="~{menu :: menu}"></div>
+
+<div class="container mt-5">
+
+    <h1>Gerenciamento de Nutrientes</h1>
+
+    <table class="table table-striped mt-4">
+
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Nutriente</th>
+                <th>Ordem</th>
+                <th>Valor Diário</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <tr th:each="e : ${elementos}">
+
+                <td th:text="${e.eleCodigo}"></td>
+                <td th:text="${e.eleNome}"></td>
+                <td th:text="${e.eleOrdem}"></td>
+                <td th:text="${e.eleValorRecomendado}"></td>
+
+                <td>
+
+                    <a th:href="@{/nutrientes/alterar/{id}(id=${e.eleCodigo})}"
+                       class="btn btn-warning btn-sm">
+                        Alterar
+                    </a>
+
+                    <a th:href="@{/nutrientes/remover/{id}(id=${e.eleCodigo})}"
+                       class="btn btn-danger btn-sm">
+                        Remover
+                    </a>
+
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+    <a th:href="@{/nutrientes/inserir}" class="btn btn-success">
+        Inserir Nutriente
+    </a>
+
+</div>
+
+<div th:replace="~{rodape :: rodape}"></div>
+
+</body>
+</html>

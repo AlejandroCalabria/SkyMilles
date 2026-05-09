@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nutri - IFTM</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/jquery.mCustomScrollbar.min.css}">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+</head>
+
+<body class="main-layout">
+
+    <!-- LOADER -->
+    <div class="loader_bg">
+        <div class="loader">
+            <img th:src="@{/images/loading.gif}" alt="#">
+        </div>
+    </div>
+
+    <!-- MENU -->
+    <div th:replace="~{menu :: menu}"></div>
+
+    <!-- CONTEÚDO -->
+    <div class="three_box">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <br><br><br><br>
+
+                    <div class="box_text">
+
+                        <h1>Remover Produtor</h1>
+
+                        <form th:action="@{/produtores/remover/{id}(id=${fabricante.fabCodigo})}"
+                              method="post">
+
+                            <table width="100%" class="table">
+
+                                <tr>
+                                    <th width="10%">Código</th>
+                                    <th width="25%">Produtor</th>
+                                    <th width="35%">Endereço</th>
+                                    <th width="15%">Contato</th>
+                                    <th width="15%">Cooperativa</th>
+                                </tr>
+
+                                <tr>
+
+                                    <td th:text="${fabricante.fabCodigo}"></td>
+
+                                    <td th:text="${fabricante.fabNome}"></td>
+
+                                    <td th:text="${fabricante.fabEndereco}"></td>
+
+                                    <td th:text="${fabricante.fabContato}"></td>
+
+                                    <td th:text="${fabricante.cooperativa != null ? fabricante.cooperativa.cooNome : 'Sem cooperativa'}">
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                            <br>
+
+                            <h4>
+                                Tem certeza que deseja remover este produtor?
+                            </h4>
+
+                            <br>
+
+                            <button type="submit" class="btn btn-danger">
+                                Confirmar Remoção
+                            </button>
+
+                            <a th:href="@{/produtores}" class="btn btn-secondary">
+                                Cancelar
+                            </a>
+
+                            <br><br>
+
+                            <div>
+
+                                <a th:href="@{/produtores/inserir}"
+                                   class="btn btn-secondary btn-sm">
+                                    Inserir um novo produtor
+                                </a>
+
+                                <a th:href="@{/produtores}"
+                                   class="btn btn-secondary btn-sm">
+                                    Voltar para produtores
+                                </a>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RODAPÉ -->
+    <footer>
+        <div class="testimonial">
+            <div class="containerP">
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <div th:replace="~{rodape :: rodape}"></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS -->
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/popper.min.js}"></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/jquery-3.0.0.min.js}"></script>
+    <script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}"></script>
+    <script th:src="@{/js/custom.js}"></script>
+
+</body>
+
+</html>

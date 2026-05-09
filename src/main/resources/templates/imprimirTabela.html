@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutri - IFTM</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/jquery.mCustomScrollbar.min.css}">
+</head>
+
+<body class="main-layout">
+
+<div class="loader_bg">
+    <div class="loader"><img th:src="@{/images/loading.gif}" alt="#"/></div>
+</div>
+
+<div th:replace="~{menu :: menu}"></div>
+// Esse arquivo serve para imprimir a tabela nutricional de um produto selecionado, a partir do formulário presente em montarTabela.html. Ele é chamado pelo método imprimirTabela() presente no controller TabelaController.java, que recebe o id do produto selecionado e retorna os dados da tabela nutricional para serem exibidos nesse template.
+<form th:action="@{/imprimirTabela}" method="post">
+
+    <div class="three_box">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <br><br><br><br>
+
+                    <div class="box_text">
+                        <h1>Gerenciamento de tabelas nutricionais</h1>
+
+                        <table width="100%">
+                            <thead>
+                            <tr class="tdt">
+                                <th width="20%">Produto</th>
+                                <th width="20%">Ação</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr class="tdt">
+                                <td>
+                                    <select name="produto">
+                                        <option th:each="p : ${produtos}"
+                                                th:value="${p.proCodigo}"
+                                                th:text="${p.fabricanteNome + ' - ' + p.proNome}">
+                                        </option>
+                                    </select>
+                                </td>
+
+                                <td>
+                                    <input type="submit" value="Imprimir informações da rotulagem">
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2">
+                                    <a th:href="@{/inserirTabela}" class="btn btn-secondary btn-sm">Inserir uma nova tabela nutricional</a>
+                                    <a th:href="@{/alterarTabela}" class="btn btn-secondary btn-sm">Alterar dados das tabelas nutricionais</a>
+                                    <a th:href="@{/removerTabela}" class="btn btn-secondary-remove btn-sm">Remover tabelas nutricionais cadastradas</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2" style="display:block;width:100%;margin:auto">
+                                    <div th:replace="embalagem :: embalagem"></div>
+                                </td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<footer>
+    <div th:replace="rodape :: rodape"></div>
+</footer>
+
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/popper.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/jquery-3.0.0.min.js}"></script>
+<script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}"></script>
+<script th:src="@{/js/custom.js}"></script>
+<script th:src="@{/js/upload.js}"></script>
+
+</body>
+</html>

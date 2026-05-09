@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Remover Nutriente</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/jquery.mCustomScrollbar.min.css}">
+    <link rel="stylesheet"
+          href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+</head>
+
+<body>
+
+<div th:replace="~{menu :: menu}"></div>
+
+<div class="container mt-5">
+
+    <h1>Confirmar Remoção</h1>
+
+    <div class="alert alert-danger">
+
+        Tem certeza que deseja remover o nutriente abaixo?
+
+    </div>
+
+    <table class="table table-bordered">
+
+        <tr>
+            <th>Código</th>
+            <td th:text="${elemento.eleCodigo}"></td>
+        </tr>
+
+        <tr>
+            <th>Nome</th>
+            <td th:text="${elemento.eleNome}"></td>
+        </tr>
+
+        <tr>
+            <th>Ordem</th>
+            <td th:text="${elemento.eleOrdem}"></td>
+        </tr>
+
+        <tr>
+            <th>Valor Diário</th>
+            <td th:text="${elemento.eleValorRecomendado}"></td>
+        </tr>
+
+    </table>
+
+    <form th:action="@{/nutrientes/remover/{id}(id=${elemento.eleCodigo})}"
+          method="post">
+
+        <button type="submit" class="btn btn-danger">
+            Confirmar Remoção
+        </button>
+
+        <a th:href="@{/nutrientes}" class="btn btn-secondary">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>
+
+<div th:replace="~{rodape :: rodape}"></div>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/popper.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}"></script>
+<script th:src="@{/js/custom.js}"></script>
+</body>
+</html>

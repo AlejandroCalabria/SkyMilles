@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Limpar Banco - Nutri IFTM</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <style>
+        .clean-box { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin: 30px auto; max-width: 700px; }
+        .clean-success { color: green; background: #e8f5e9; padding: 15px; border-radius: 4px; border: 1px solid #a5d6a7; }
+        .clean-warn { color: #b45309; background: #fff3e0; padding: 15px; border-radius: 4px; border: 1px solid #ffe0b2; }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="menu :: menu"></div>
+
+<div class="container">
+    <div class="clean-box">
+
+        <h3>Limpeza do Banco de Dados</h3>
+        <p style="color:#666;">Remove produtos sem produtor e cria um produtor de teste.</p>
+
+        <!-- RESULTADO -->
+        <div th:if="${confirm == 'sim'}">
+
+            <div class="clean-success" th:if="${sucesso}">
+                <b>Limpeza concluída!</b><br><br>
+                <span th:utext="${log}"></span>
+            </div>
+
+            <div class="clean-warn" th:if="${erro}">
+                <b>Erro ao limpar banco!</b><br>
+                <span th:utext="${log}"></span>
+            </div>
+
+            <br>
+            <a th:href="@{/tabela}" class="btn btn-primary">Ver Tabelas</a>
+            <a th:href="@{/receita/nova}" class="btn btn-secondary">Nova Receita</a>
+
+        </div>
+
+        <!-- CONFIRMAÇÃO -->
+        <div th:if="${confirm != 'sim'}">
+
+            <div class="clean-warn">
+                <b>Atenção!</b><br>
+                Esta ação vai remover todos os produtos sem fabricante.<br>
+                Um fabricante de teste será criado automaticamente.
+            </div>
+
+            <br>
+            <a th:href="@{/banco/limpar(confirmar='sim')}" class="btn btn-danger">
+                Sim, limpar banco
+            </a>
+
+            <a th:href="@{/tabela}" class="btn btn-secondary">
+                Cancelar
+            </a>
+
+        </div>
+
+    </div>
+</div>
+
+<div th:replace="rodape :: rodape"></div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

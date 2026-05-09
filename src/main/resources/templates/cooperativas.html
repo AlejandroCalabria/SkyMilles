@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutri - IFTM</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/jquery.mCustomScrollbar.min.css}">
+</head>
+
+<body class="main-layout">
+
+<div class="loader_bg">
+    <div class="loader"><img th:src="@{/images/loading.gif}" alt="#"/></div>
+</div>
+
+<div th:replace="~{menu :: menu}"></div>
+
+<div class="three_box">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box_text">
+                    <h3 style="color:#A0522D;">Gerenciamento de Produtores</h3>
+
+                    <br><br><br><br>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="box_text">
+                                <table width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th width="5%">Códigos</th>
+                                        <th width="20%">Produtores</th>
+                                        <th width="50%">Endereço</th>
+                                        <th width="25%">Cooperativa</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    <tr th:each="c : ${fabricantes}">
+                                        <td th:text="${c.fabCodigo}"></td>
+                                        <td th:text="${c.fabNome}"></td>
+                                        <td th:text="${c.fabEndereco}"></td>
+                                        <td th:text="${c.fabCooperativa}"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="4">
+                                            <a th:href="@{/inserirProdutor}">Inserir novo produtor</a> |
+                                            <a th:href="@{/alterarProdutor}">Alterar dados dos produtores</a> |
+                                            <a th:href="@{/removerProdutor}">Remover produtores cadastrados</a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br><br><br><br>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="box_text">
+                                <table width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th>Gerenciamento de Cooperativas</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            <a th:href="@{/inserirCooperativa}">Inserir nova cooperativa</a> |
+                                            <a th:href="@{/alterarCooperativa}">Alterar dados das cooperativas</a> |
+                                            <a th:href="@{/removerCooperativa}">Remover cooperativas cadastradas</a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div th:replace="rodape :: rodape"></div>
+</footer>
+
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/popper.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/jquery-3.0.0.min.js}"></script>
+<script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}"></script>
+<script th:src="@{/js/custom.js}"></script>
+
+</body>
+</html>

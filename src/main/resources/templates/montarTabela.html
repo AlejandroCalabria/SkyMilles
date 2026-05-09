@@ -1,0 +1,79 @@
+<style>
+    .tableN, .thN, .tdN {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    .thN, .tdN {
+        padding: 2px;
+    }
+</style>
+
+<table class="tableN" style="color:#000000;width:60%;font-size:11pt;font-family:'Calibri';margin-left:3px">
+
+    <tr style="background-color:#ffffff;text-align:center">
+        <td colspan="4" class="tdN">
+            <b>INFORMAÇÃO NUTRICIONAL</b>
+        </td>
+    </tr>
+
+    <tr style="background-color:#ffffff">
+        <td colspan="4" class="tdN">
+            <span th:if="${tabela != null}">
+                Porções por embalagem:
+                <span th:text="${tabela.tabTotalPorcao}"></span>
+
+                <br>
+
+                Porção:
+                <span th:text="${tabela.tabPorcao}"></span>
+                <span th:text="${unidade.nome}"></span>
+                (
+                <span th:text="${tabela.tabTotalColheres}"></span>
+                <span th:text="${colheresDescricao}"></span>
+                )
+            </span>
+        </td>
+    </tr>
+
+    <tr style="background-color:#ffffff;text-align:center;">
+        <td width="60%" class="tdN"></td>
+
+        <td width="20%" class="tdN">
+            <b>
+                <span th:text="${tabela.tabPorcaoPadrao} + ' ' + ${unidade.nome}"></span>
+            </b>
+        </td>
+
+        <td width="15%" class="tdN">
+            <b>
+                <span th:text="${tabela.tabPorcao} + ' ' + ${unidade.nome}"></span>
+            </b>
+        </td>
+
+        <td width="15%" class="tdN"><b>%VD*</b></td>
+    </tr>
+
+    <tr style="background-color:#ffffff;text-align:center;">
+        <td class="tdN" style="text-align:left;">Calorias (kcal)</td>
+
+        <td class="tdN" th:text="${tabela.tabValorEnergetico}"></td>
+
+        <td class="tdN" th:text="${tabela.tabValorEnergeticoPorcao}"></td>
+
+        <td class="tdN" th:text="${tabela.tabVD}"></td>
+    </tr>
+
+    <tr th:each="el : ${elementos}" style="background-color:#ffffff;">
+        <td class="tdN" style="text-align:left;" th:text="${el.nome}"></td>
+        <td class="tdN" style="text-align:center;" th:text="${el.valorPadrao}"></td>
+        <td class="tdN" style="text-align:center;" th:text="${el.valor}"></td>
+        <td class="tdN" style="text-align:center;" th:text="${el.vd}"></td>
+    </tr>
+
+    <tr style="background-color:#ffffff;text-align:left">
+        <td colspan="4" class="tdN">
+            <sup>*</sup> Percentual de valores diários fornecidos pela porção
+        </td>
+    </tr>
+    
+</table>

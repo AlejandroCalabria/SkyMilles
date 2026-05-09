@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>Produtores</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div th:replace="~{menu :: menu}"></div>
+<div class="container">
+
+    <h1>Produtores Cadastrados</h1>
+
+    <table class="table">
+
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Produtor</th>
+                <th>Endereço</th>
+                <th>Contato</th>
+                <th>Cooperativa</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <!-- LOOP DOS FABRICANTES -->
+            <tr th:each="f : ${fabricantes}">
+
+                <td th:text="${f.fabCodigo}"></td>
+
+                <td th:text="${f.fabNome}"></td>
+
+                <td th:text="${f.fabEndereco}"></td>
+
+                <td th:text="${f.fabContato}"></td>
+
+                <td th:text="${f.cooperativa != null ? f.cooperativa.cooNome : 'Sem cooperativa'}"></td>
+
+                <!-- BOTÕES -->
+                <td>
+
+                    <!-- ALTERAR -->
+                    <a th:href="@{/produtores/alterar/{id}(id=${f.fabCodigo})}"
+                       class="btn btn-secondary btn-sm">
+                        Alterar
+                    </a>
+
+                    <!-- REMOVER -->
+                    <a th:href="@{/produtores/remover/{id}(id=${f.fabCodigo})}"
+                       class="btn btn-danger btn-sm">
+                        Remover
+                    </a>
+
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+    <!-- BOTÃO INSERIR -->
+    <div>
+
+        <a href="/produtores/inserir"
+           class="btn btn-primary">
+            Inserir Novo Produtor
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

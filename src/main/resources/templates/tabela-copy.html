@@ -1,0 +1,76 @@
+<td style="margin-right:4px">  
+    <div class="validade">
+        <b>Data de fabricação:</b><br>
+        <b>Data de Validade: </b>
+    </div>  
+
+    <div class="whatsapp">
+        <img th:src="@{/images/whatsapp.png}" width="25%">
+        <b th:text="${fabricanteContato}"></b>
+    </div>
+</td>
+</tr>
+
+<tr th:style="'background-color:' + ${cor}">
+    <td colspan="2">
+        <div class="nomeProduto" th:text="${produtoNome.toUpperCase()}"></div>
+    </td> 
+</tr>
+
+<tr th:style="'background-color:' + ${cor} + ';padding:2px'" width="100%">
+    <td width="60%" rowspan="4" style="padding:0px;">
+        <div th:replace="montarTabela :: tabela"></div>
+    </td>
+
+    <td width="40%">
+        <div style="text-align:center;color:#000000;font-size:14pt;font-family:'Calibri'"
+             th:text="${recomendacoes}">
+        </div>
+    </td>
+</tr>
+
+<tr th:style="'background-color:' + ${cor}">
+    <td width="40%">
+        <div style="text-align:center;color:#000000;font-size:14pt;font-family:'Calibri'">
+            <h3 style="text-decoration:underline;text-align:center;">INGREDIENTES</h3>
+            <span th:text="${ingredientes}"></span>
+        </div>
+    </td>
+</tr>
+
+<tr th:style="'background-color:' + ${cor}">
+    <td width="40%">
+        <div style="text-align:center;color:#000000;font-size:20pt;font-family:'Calibri'">
+            <b th:text="${pesoFormatado}"></b>
+        </div>
+    </td>
+</tr>
+
+<tr th:style="'background-color:' + ${cor}">
+    <td width="40%">
+        <div style="text-align:center;color:#000000;font-size:14pt;font-family:'Calibri'"
+             th:text="${gluten}">
+        </div>
+    </td>
+</tr>
+
+<tr th:style="'background-color:' + ${cor}">
+    <td width="40%" colspan="2">
+        <table>
+            <tr>
+                <td width="70%">
+                    <div style="text-align:center;color:#000000;font-size:14pt;font-family:'Calibri'">
+                        <p><b>Produzido por: </b><span th:text="${fabricanteNome}"></span></p>
+                        <p style="margin:0"><b>Endereço: </b><span th:text="${fabricanteEndereco}"></span></p>
+                    </div>
+                </td>  
+                <td width="30%">
+                    <div style="color:#000000;font-size:14pt;font-family:'Calibri'">
+                        <img th:src="@{/images/feira.png}" width="70%">
+                        <img th:src="@{/images/cieps.png}" width="70%">
+                    </div>
+                </td>    
+            </tr>
+        </table>
+    </td>
+</tr>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Visualizar Tabela Nutricional</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+
+    <style>
+        body { background: #f8f9fa; }
+
+        .rotulo-anvisa {
+            width: 420px;
+            border: 3px solid #000;
+            background: #fff;
+            color: #000;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 13px;
+        }
+        .rotulo-anvisa .r-titulo {
+            font-size: 22px;
+            font-weight: 900;
+            padding: 4px 8px 3px 8px;
+            border-bottom: 8px solid #000;
+            line-height: 1.1;
+        }
+        .rotulo-anvisa .r-porcao-bloco {
+            padding: 4px 8px;
+            border-bottom: 1px solid #000;
+            font-size: 12px;
+            overflow: hidden;
+        }
+        .rotulo-anvisa .r-porcao-valor {
+            font-size: 17px;
+            font-weight: 900;
+        }
+        .rotulo-anvisa .r-total-porcoes {
+            font-size: 11px;
+            float: right;
+        }
+        .rotulo-anvisa .r-colheres {
+            font-size: 11px;
+            clear: both;
+        }
+        .rotulo-anvisa .r-divisor-grosso { border-top: 8px solid #000; }
+        .rotulo-anvisa .r-divisor-medio  { border-top: 4px solid #000; }
+        .rotulo-anvisa .r-header-colunas {
+            display: flex;
+            justify-content: flex-end;
+            gap: 24px;
+            padding: 2px 8px;
+            font-size: 10px;
+            font-weight: 700;
+            border-bottom: 1px solid #000;
+        }
+        .rotulo-anvisa .r-energia-bloco {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 3px 8px;
+            gap: 8px;
+        }
+        .rotulo-anvisa .r-energia-label  { font-size: 13px; font-weight: 700; flex: 1; }
+        .rotulo-anvisa .r-energia-valor  { font-size: 19px; font-weight: 900; }
+        .rotulo-anvisa .r-energia-vd     { font-size: 11px; min-width: 44px; text-align: right; }
+        .rotulo-anvisa .r-nutriente {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2px 8px;
+            border-bottom: 1px solid #000;
+            font-size: 12px;
+            gap: 4px;
+        }
+        .rotulo-anvisa .r-nutriente .r-nome  { flex: 1; }
+        .rotulo-anvisa .r-nutriente .r-valor { min-width: 60px; text-align: right; font-weight: 700; }
+        .rotulo-anvisa .r-nutriente .r-vd   { min-width: 44px; text-align: right; font-weight: 400; }
+        .rotulo-anvisa .r-rodape {
+            padding: 4px 8px;
+            font-size: 9px;
+            line-height: 1.4;
+            border-top: 4px solid #000;
+        }
+        .r-vazio {
+            padding: 8px;
+            font-size: 11px;
+            color: #888;
+            font-style: italic;
+            text-align: center;
+            border-bottom: 1px solid #000;
+        }
+    </style>
+</head>
+
+<body class="container mt-4">
+
+<h2 class="mb-1">Rótulo Nutricional</h2>
+<p class="text-muted mb-4" th:text="${tabela.produto.proNome}"></p>
+
+<div class="rotulo-anvisa">
+
+    <div class="r-titulo">Informação Nutricional</div>
+
+    <!-- Porção -->
+    <div class="r-porcao-bloco">
+        <span class="r-total-porcoes">
+            Porções por embalagem:
+            <strong th:text="${tabela.tabTotalPorcao}">—</strong>
+        </span>
+
+        Porção de
+        <span class="r-porcao-valor" th:text="${tabela.tabPorcao}">—</span>
+
+        <span th:if="${tabela.unidadeMedida != null}"
+              th:text="${tabela.unidadeMedida.undNome}"></span>
+        <span th:if="${tabela.unidadeMedida == null}">unid.</span>
+
+        <div class="r-colheres"
+             th:if="${tabela.tabTotalColheres != null and tabela.tabTotalColheres != 0}">
+            (<span th:text="${tabela.tabTotalColheres}"></span> colher(es)/copo(s))
+        </div>
+    </div>
+
+    <div class="r-divisor-grosso"></div>
+
+    <div class="r-header-colunas">
+        <span>Quantidade por porção</span>
+        <span>%VD*</span>
+    </div>
+
+    <!-- Valor Energético -->
+    <div class="r-energia-bloco">
+        <span class="r-energia-label">Valor Energético</span>
+        <span class="r-energia-valor">
+            <span th:text="${tabela.tabValorEnergeticoPorcao}">—</span> kcal
+        </span>
+        <span class="r-energia-vd">
+            <strong th:text="${tabela.tabVD != null and tabela.tabVD > 0 ? tabela.tabVD + '%' : '**'}">**</strong>
+        </span>
+    </div>
+
+    <div class="r-divisor-medio"></div>
+
+    <!--
+        Nutrientes: iteramos sobre ${elementos} (List<TabNutElemento>)
+        carregado pelo controller com @Transactional.
+        th:each funciona com qualquer Iterable — não usa #lists.isEmpty().
+        O bloco "vazio" usa th:if="${elementosVazios}" (boolean do controller).
+    -->
+    <div th:each="tne : ${elementos}" class="r-nutriente">
+        <span class="r-nome">
+            <strong th:text="${tne.elemento.eleNome}">Nutriente</strong>
+        </span>
+        <span class="r-valor" th:text="${tne.tneValor}">0</span>
+        <span class="r-vd"
+              th:text="${tne.tneVD > 0 ? tne.tneVD + '%' : '**'}">**</span>
+    </div>
+
+    <!-- Exibido apenas se o controller setou elementosVazios=true -->
+    <div th:if="${elementosVazios}" class="r-vazio">
+        Nenhum nutriente cadastrado para esta tabela.
+    </div>
+
+    <div class="r-rodape">
+        * Percentual de Valores Diários fornecidos pela porção.<br>
+        ** VD não estabelecido.<br>
+        Valores Diários de referência com base em uma dieta de 2000 kcal ou 8400 kJ.
+        Seus valores diários podem ser maiores ou menores dependendo de suas
+        necessidades energéticas.
+    </div>
+
+</div>
+
+<div class="mt-4 d-flex gap-2">
+    <a th:href="@{/tabela}" class="btn btn-secondary">Voltar</a>
+    <a th:href="@{/tabela/gerar-pdf/{id}(id=${tabela.tabCodigo})}"
+       class="btn btn-primary">Gerar PDF</a>
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

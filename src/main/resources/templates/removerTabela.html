@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Remover Tabela</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+
+<body>
+
+<div th:replace="~{menu :: menu}"></div>
+
+<div class="container mt-5">
+
+    <h1>Remover Tabela Nutricional</h1>
+
+    <div class="alert alert-danger">
+
+        Tem certeza que deseja remover a tabela do produto:
+
+        <b th:text="${tabela.produto.proNome}"></b>?
+
+    </div>
+
+    <form th:action="@{/tabela/remover/{id}(id=${tabela.tabCodigo})}"
+          method="post">
+
+        <button type="submit"
+                class="btn btn-danger">
+            Confirmar Remoção
+        </button>
+
+        <a th:href="@{/tabela}"
+           class="btn btn-secondary">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>
+
+<div th:replace="~{rodape :: rodape}"></div>
+
+</body>
+</html>

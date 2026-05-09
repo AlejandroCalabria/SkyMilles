@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nutri IFTM - Calculadora TACO</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+
+    <style>
+        .loader_bg { position: fixed; z-index: 999999; width: 100%; height: 100%; background: #fff; display: flex; align-items: center; justify-content: center; }
+        .resultado-section { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 8px; margin-top: 20px; }
+        .ingrediente-encontrado { color: green; }
+        .ingrediente-nao-encontrado { color: red; }
+        .ingrediente-sugerido { color: #0066aa; }
+        .rotulo-preview { border: 2px solid #333; padding: 12px; max-width: 500px; }
+        .tabela-anvisa { width: 100%; border-collapse: collapse; }
+        .tabela-anvisa td, .tabela-anvisa th { border-top: 2px solid #333; padding: 4px; }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{menu :: menu}"></div>
+
+<div class="container mt-4">
+    <h3>Calculadora Nutricional (TACO)</h3>
+
+    <!-- FORM -->
+    <form th:action="@{/receita/calcular}" method="post" th:if="${acao == null}">
+        <input type="text" name="nomeProduto" placeholder="Nome do Produto" required>
+
+        <input type="number" name="porcao" step="0.01" placeholder="Porção" required>
+
+        <select name="g_ml">
+            <option value="g">g</option>
+            <option value="ml">ml</option>
+        </select>
+
+        <div id="ingredientes">
+            <div>
+                <input name="ingredientes[0].nome" placeholder="Ingrediente">
+                <input name="ingredientes[0].qtd" type="number" step="0.1">
+            </div>
+        </div>
+
+        <button type="submit">Calcular</button>
+    </form>
+
+    <!-- RESULTADO -->
+    <div th:if="${acao != null}" class="resultado-section">
+
+        <p>
+            <b>Produto:</b> <span th:text="${nomeProduto}"></span> |
+            <b>Peso total:</b> <span th:text="${pesoTotal}"></span>g |
+            <b>Porção:</b> <span th:text="${porcao}"></span>g
+        </p>
+
+        <!-- Ingredientes encontrados -->
+        <div th:if="${encontrados}">
+            <h5>Ingredientes encontrados</h5>
+            <ul>
+                <li th:each="e : ${encontrados}" th:text="${e}" class="ingrediente-encontrado"></li>
+            </ul>
+        </div>
+
+        <!-- Ingredientes não encontrados -->
+        <div th:if="${sugestoes}">
+            <h5>Não encontrados</h5>
+            <ul>
+                <li th:each="s : ${sugestoes}" class="ingrediente-nao-encontrado">
+                    <span th:text="${s.nomeBusca}"></span>
+
+                    <ul>
+                        <li th:each="opt : ${s.sugestoes}" class="ingrediente-sugerido"
+                            th:text="${opt.descricao}"></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- RÓTULO -->
+        <div class="rotulo-preview">
+            <h4>INFORMAÇÃO NUTRICIONAL</h4>
+
+            <table class="tabela-anvisa">
+                <tr>
+                    <th></th>
+                    <th>100g</th>
+                    <th>Porção</th>
+                </tr>
+
+                <tr>
+                    <td>Energia</td>
+                    <td th:text="${v.energia100g}"></td>
+                    <td th:text="${v.energiaPorcao}"></td>
+                </tr>
+
+                <tr>
+                    <td>Carboidratos</td>
+                    <td th:text="${v.carboidrato100g}"></td>
+                    <td th:text="${v.carboidratoPorcao}"></td>
+                </tr>
+
+                <tr>
+                    <td>Proteínas</td>
+                    <td th:text="${v.proteina100g}"></td>
+                    <td th:text="${v.proteinaPorcao}"></td>
+                </tr>
+
+                <tr>
+                    <td>Gorduras</td>
+                    <td th:text="${v.lipideos100g}"></td>
+                    <td th:text="${v.lipideosPorcao}"></td>
+                </tr>
+
+                <tr>
+                    <td>Sódio</td>
+                    <td th:text="${v.sodio100g}"></td>
+                    <td th:text="${v.sodioPorcao}"></td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<div th:replace="th:replace="~{rodape :: rodape}""></div>
+
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>
