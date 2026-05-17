@@ -43,18 +43,18 @@
                                     </thead>
 
                                     <tbody>
-                                    <tr th:each="c : ${fabricantes}">
-                                        <td th:text="${c.fabCodigo}"></td>
-                                        <td th:text="${c.fabNome}"></td>
-                                        <td th:text="${c.fabEndereco}"></td>
-                                        <td th:text="${c.fabCooperativa}"></td>
+                                    <tr th:each="c : ${cooperativas}">
+                                        <td th:text="${c.cooCodigo}"></td>
+                                        <td th:text="${c.cooNome}"></td>
+                                        <td th:text="${c.cooEndereco}"></td>
+                                        <td th:text="${c.cooCidade}"></td>
                                     </tr>
 
                                     <tr>
                                         <td colspan="4">
-                                            <a th:href="@{/inserirProdutor}">Inserir novo produtor</a> |
-                                            <a th:href="@{/alterarProdutor}">Alterar dados dos produtores</a> |
-                                            <a th:href="@{/removerProdutor}">Remover produtores cadastrados</a>
+                                            <a th:href="@{/produtores/inserir}">Inserir novo produtor</a> |
+                                            <a th:href="@{/produtores}">Alterar dados dos produtores</a> |
+                                            <a th:href="@{/produtores}">Remover produtores cadastrados</a>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -78,9 +78,7 @@
                                     <tbody>
                                     <tr>
                                         <td>
-                                            <a th:href="@{/inserirCooperativa}">Inserir nova cooperativa</a> |
-                                            <a th:href="@{/alterarCooperativa}">Alterar dados das cooperativas</a> |
-                                            <a th:href="@{/removerCooperativa}">Remover cooperativas cadastradas</a>
+                                            <a th:href="@{/cooperativas}">Gerenciar Cooperativas</a>
                                         </td>
                                     </tr>
                                     </tbody>

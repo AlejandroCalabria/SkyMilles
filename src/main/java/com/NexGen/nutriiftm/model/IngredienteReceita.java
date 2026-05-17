@@ -20,7 +20,9 @@ public class IngredienteReceita {
 
     private String nome;
     private double quantidadeG;
-    private Integer codigoTACO;
+
+    // ── ALTERADO: era Integer, agora String para comportar o código da TBCA (ex: "C0001A") ──
+    private String codigoTACO;
 
     @ManyToOne
     @JoinColumn(name = "receita_id")

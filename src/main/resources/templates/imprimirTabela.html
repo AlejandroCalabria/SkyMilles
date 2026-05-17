@@ -19,7 +19,7 @@
 </div>
 
 <div th:replace="~{menu :: menu}"></div>
-// Esse arquivo serve para imprimir a tabela nutricional de um produto selecionado, a partir do formulário presente em montarTabela.html. Ele é chamado pelo método imprimirTabela() presente no controller TabelaController.java, que recebe o id do produto selecionado e retorna os dados da tabela nutricional para serem exibidos nesse template.
+<!-- Exibe tabela nutricional do produto selecionado. Rota: /tabela/imprimir/{id} -->
 <form th:action="@{/imprimirTabela}" method="post">
 
     <div class="three_box">

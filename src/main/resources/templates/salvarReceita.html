@@ -2,7 +2,7 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${sucesso} ? 'Sucesso - Nutri IFTM' : 'Erro - Nutri IFTM'"></title>
+    <title>Resultado da Receita - Nutri IFTM</title>
 
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
@@ -10,40 +10,45 @@
 
 <body class="main-layout">
 
+<div th:replace="~{menu :: menu}"></div>
+
 <div class="container" style="margin-top:50px;">
     <div class="box_text">
 
-        <!-- SUCESSO -->
-        <div th:if="${sucesso}">
-            <h3>Receita salva com sucesso!</h3>
+        <div th:if="${receita != null}">
+            <h3>Receita calculada com sucesso!</h3>
 
-            <p th:text="'Produto: ' + ${produtoNome}"></p>
-            <p th:text="'Peso total: ' + ${pesoTotal} + ' ' + ${unidade} + ' | Porção: ' + ${porcao} + ' ' + ${unidade}"></p>
-            <p th:text="'Unidade: ' + ${unidade} + ' | Fabricante: ' + ${fabricanteCodigo}"></p>
+            <p><b>Produto:</b> <span th:text="${receita.nomeProduto}"></span></p>
+            <p><b>Peso total:</b> <span th:text="${receita.pesoTotalG}"></span> g
+               | <b>Porção:</b> <span th:text="${receita.porcaoG}"></span> g</p>
 
-            <p th:if="${ingredientes != null and !#strings.isEmpty(ingredientes)}">
-                <b>Ingredientes:</b>
-                <span th:text="${ingredientes}"></span>
-            </p>
-
-            <p>
-                <b th:text="'Código da Tabela Nutricional: ' + ${tabCodigo}"></b>
-            </p>
+            <div th:if="${valores != null}" class="mt-3">
+                <h5>Resumo Nutricional (por porção)</h5>
+                <table class="table table-sm table-bordered" style="max-width:400px;">
+                    <tr><th>Energia</th><td th:text="${valores.energiaPorcaoKcal} + ' kcal'"></td></tr>
+                    <tr><th>Carboidratos</th><td th:text="${valores.carboidratoPorcao} + ' g'"></td></tr>
+                    <tr><th>Proteínas</th><td th:text="${valores.proteinaPorcao} + ' g'"></td></tr>
+                    <tr><th>Gorduras Totais</th><td th:text="${valores.lipideosPorcao} + ' g'"></td></tr>
+                    <tr><th>Fibras</th><td th:text="${valores.fibraPorcao} + ' g'"></td></tr>
+                    <tr><th>Sódio</th><td th:text="${valores.sodioPorcaoMg} + ' mg'"></td></tr>
+                </table>
+            </div>
 
             <br>
-            <a th:href="@{/inserirReceita}" class="btn btn-primary">Nova Receita</a>
+            <a th:href="@{/receita/inserir}" class="btn btn-primary">Nova Receita</a>
             <a th:href="@{/tabela}" class="btn btn-secondary">Ver Tabelas</a>
             <a th:href="@{/}" class="btn btn-secondary">Página Principal</a>
         </div>
 
-        <!-- ERRO -->
-        <div th:if="${!sucesso}">
-            <h3 th:text="${mensagemErro}"></h3>
-            <a th:href="@{/inserirReceita}" class="btn btn-primary">Voltar</a>
+        <div th:if="${receita == null}">
+            <h3 class="text-danger">Receita não encontrada.</h3>
+            <a th:href="@{/receita/inserir}" class="btn btn-primary">Voltar</a>
         </div>
 
     </div>
 </div>
 
+<div th:replace="~{rodape :: rodape}"></div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

@@ -2,13 +2,13 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Calculadora Nutricional</title>
+    <title>Calculadora Nutricional - Nutri IFTM</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/responsive.css}">
     <style>
-        /* Autocomplete */
+        /* ── Autocomplete ── */
         .ac-wrap { position: relative; }
         .ac-list {
             display: none; position: absolute; z-index: 9999;
@@ -17,63 +17,220 @@
             overflow-y: auto; width: 100%;
             box-shadow: 0 4px 12px rgba(0,0,0,.15);
         }
-        .ac-item {
-            padding: 7px 12px; cursor: pointer;
-            font-size: 13px; border-bottom: 1px solid #f0f0f0;
-        }
+        .ac-item { padding: 6px 10px; cursor: pointer; font-size: 12px; border-bottom: 1px solid #f0f0f0; }
         .ac-item:hover { background: #0d6efd; color: #fff; }
-        .ac-cat { font-size: 11px; opacity: .6; margin-left: 6px; }
+        .ac-cat { font-size: 10px; opacity: .6; margin-left: 5px; }
         .ac-found { font-size: 11px; color: #198754; margin-top: 2px; }
 
-        /* Rótulo ANVISA */
+        /* ══ RÓTULO ANVISA ══ */
+        .rotulo-wrapper { overflow-x: auto; }
+
         .rotulo-anvisa {
-            width: 100%; max-width: 380px;
-            border: 3px solid #000; background: #fff;
-            color: #000; font-family: Arial, Helvetica, sans-serif;
-            font-size: 13px;
-        }
-        .rotulo-anvisa .r-titulo {
-            font-size: 20px; font-weight: 900;
-            padding: 4px 8px 3px; border-bottom: 8px solid #000; line-height: 1.1;
-        }
-        .rotulo-anvisa .r-porcao-bloco {
-            padding: 4px 8px; border-bottom: 1px solid #000;
-            font-size: 12px; overflow: hidden;
-        }
-        .rotulo-anvisa .r-porcao-valor { font-size: 16px; font-weight: 900; }
-        .rotulo-anvisa .r-total-porcoes { font-size: 11px; float: right; }
-        .rotulo-anvisa .r-divisor-grosso { border-top: 8px solid #000; }
-        .rotulo-anvisa .r-divisor-medio  { border-top: 4px solid #000; }
-        .rotulo-anvisa .r-header-colunas {
-            display: flex; justify-content: flex-end;
-            gap: 20px; padding: 2px 8px;
-            font-size: 10px; font-weight: 700; border-bottom: 1px solid #000;
-        }
-        .rotulo-anvisa .r-energia-bloco {
-            display: flex; justify-content: space-between;
-            align-items: baseline; padding: 3px 8px; gap: 8px;
-        }
-        .rotulo-anvisa .r-energia-label { font-size: 12px; font-weight: 700; flex: 1; }
-        .rotulo-anvisa .r-energia-valor { font-size: 17px; font-weight: 900; }
-        .rotulo-anvisa .r-energia-vd { font-size: 11px; min-width: 40px; text-align: right; }
-        .rotulo-anvisa .r-nutriente {
-            display: flex; justify-content: space-between;
-            align-items: center; padding: 2px 8px;
-            border-bottom: 1px solid #000; font-size: 12px; gap: 4px;
-        }
-        .rotulo-anvisa .r-nutriente .r-nome  { flex: 1; }
-        .rotulo-anvisa .r-nutriente .r-valor { min-width: 55px; text-align: right; font-weight: 700; }
-        .rotulo-anvisa .r-nutriente .r-vd    { min-width: 40px; text-align: right; }
-        .rotulo-anvisa .r-rodape {
-            padding: 4px 8px; font-size: 9px;
-            line-height: 1.4; border-top: 4px solid #000;
+            display: inline-block;
+            width: auto;
+            min-width: 300px;
+            max-width: 100%;
+            border: 2px solid #000;
+            background: #fff;
+            color: #000;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            font-weight: normal;
+            line-height: 1.35;
+            box-sizing: border-box;
         }
 
-        /* Linha de ingrediente */
-        .ing-row { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px; }
+        .rotulo-anvisa .r-titulo {
+            font-size: 16px;
+            font-weight: 900;
+            padding: 4px 10px 3px;
+            border-bottom: 3px solid #000;
+            text-align: center;
+        }
+
+        .rotulo-anvisa .r-porcao-bloco {
+            padding: 3px 10px 4px;
+            border-bottom: 1px solid #000;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        .rotulo-anvisa .r-porcao-linha1 {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 6px;
+        }
+        .rotulo-anvisa .r-porcao-valor   { font-size: 13px; font-weight: 900; }
+        .rotulo-anvisa .r-total-porcoes  { font-size: 10.5px; white-space: nowrap; }
+        .rotulo-anvisa .r-medida-caseira { font-size: 10px; color: #333; margin-top: 1px; }
+
+        .rotulo-anvisa .r-divisor-grosso { border-top: 4px solid #000; }
+        .rotulo-anvisa .r-divisor-medio  { border-top: 2px solid #000; }
+
+        .r-grid {
+            display: grid;
+            grid-template-columns: auto 62px 70px 38px;
+            gap: 0 6px;
+            padding: 0 10px;
+            align-items: center;
+        }
+
+        .rotulo-anvisa .r-header {
+            font-size: 12px;
+            font-weight: bold;
+            padding-top: 3px;
+            padding-bottom: 3px;
+            border-bottom: 2px solid #000;
+        }
+        .rotulo-anvisa .r-header span             { text-align: right; display: block; }
+        .rotulo-anvisa .r-header span:first-child { text-align: left; }
+
+        .rotulo-anvisa .r-energia {
+            border-bottom: 1px solid #000;
+            padding-top: 3px;
+            padding-bottom: 3px;
+        }
+        .rotulo-anvisa .r-energia .rn {
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .rotulo-anvisa .r-energia .rv {
+            text-align: right;
+            font-size: 11px;
+            white-space: nowrap;
+            line-height: 1.3;
+        }
+        .rotulo-anvisa .r-energia .rv .kj { display: block; font-size: 9px; color: #444; }
+        .rotulo-anvisa .r-energia .rvd    { text-align: right; font-size: 11px; font-weight: bold; }
+
+        .rotulo-anvisa .r-nut {
+            border-bottom: 1px solid #000;
+            padding-top: 2px;
+            padding-bottom: 2px;
+        }
+        .rotulo-anvisa .r-nut .rn  { font-size: 11px; font-weight: bold; white-space: nowrap; }
+        .rotulo-anvisa .r-nut .rv  { text-align: right; font-size: 11px; white-space: nowrap; }
+        .rotulo-anvisa .r-nut .rvd { text-align: right; font-size: 11px; font-weight: bold; white-space: nowrap; }
+
+        .rotulo-anvisa .r-sub .rn {
+            padding-left: 16px;
+            font-weight: normal;
+            font-size: 10.5px;
+        }
+
+        .rotulo-anvisa .r-trans-vd { text-align: right; font-size: 8.5px; line-height: 1.2; }
+
+        .rotulo-anvisa .r-rodape {
+            padding: 3px 10px 4px;
+            font-size: 8.5px;
+            line-height: 1.5;
+            border-top: 2px solid #000;
+        }
+
+        /* ══ CAMPOS EDITÁVEIS NO RÓTULO ══ */
+        .rv-edit {
+            border: none;
+            border-bottom: 1px dashed #aaa;
+            background: #fffde7;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            text-align: right;
+            padding: 0 2px;
+            outline: none;
+            color: #000;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .rv-edit:focus {
+            border-bottom: 1px solid #0d6efd;
+            background: #e3f2fd;
+        }
+        .rv-edit-porcao {
+            font-size: 13px;
+            font-weight: 900;
+            width: 50px;
+            text-align: center;
+        }
+        .rv-edit-totalp {
+            font-size: 10.5px;
+            font-weight: bold;
+            width: 40px;
+            text-align: center;
+        }
+        .rv-edit-medida {
+            font-size: 10px;
+            color: #333;
+            text-align: left;
+            width: 200px;
+        }
+        .rv-edit-vd {
+            font-size: 11px;
+            font-weight: bold;
+            width: 36px;
+            text-align: right;
+        }
+        .rv-edit-num { width: 58px; }
+        .rotulo-edit-hint {
+            font-size: 10px;
+            color: #888;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .rotulo-edit-hint span.swatch {
+            display: inline-block;
+            width: 12px; height: 12px;
+            background: #fffde7;
+            border: 1px dashed #aaa;
+            border-radius: 2px;
+        }
+
+        /* ── Calculadora layout ── */
+        .ing-row { display: flex; flex-direction: column; gap: 0; margin-bottom: 10px; }
         .ing-nome { flex: 2; }
         .ing-qtd  { flex: 1; }
-        .ing-del  { flex: 0 0 36px; padding-top: 1px; }
+        .ing-und  { flex: 0 0 64px; }
+        .ing-del  { flex: 0 0 36px; }
+        .ing-conv { font-size: 10px; color: #888; margin-top: 2px; }
+
+        .calc-section {
+            background: #f8f9fa; border: 1px solid #dee2e6;
+            border-radius: 6px; padding: 12px 14px; margin-bottom: 12px;
+        }
+        .calc-section-title {
+            font-size: 10px; text-transform: uppercase;
+            letter-spacing: .6px; color: #777; font-weight: 700; margin-bottom: 10px;
+        }
+
+        .produto-tabs { display: flex; gap: 4px; border-bottom: 2px solid #dee2e6; margin-bottom: 12px; }
+        .produto-tabs button {
+            border: 1px solid #dee2e6; border-bottom: none;
+            border-radius: 5px 5px 0 0; background: #fff;
+            color: #555; font-size: 13px; padding: 5px 14px; cursor: pointer;
+        }
+        .produto-tabs button:hover { background: #e9ecef; }
+        .produto-tabs button.active { background: #5a8a3c; color: #fff; border-color: #5a8a3c; font-weight: 600; }
+
+        select.form-select, select.form-control { border-radius: 4px !important; }
+
+        .peso-info {
+            font-size: 12px; color: #2e6b1e;
+            background: #e8f5e9; border: 1px solid #c8e6c9;
+            border-radius: 4px; padding: 4px 10px; margin-top: 6px;
+        }
+
+        #totalPorcoes {
+            background: #fff !important;
+            cursor: text !important;
+        }
+
+        .peso-produto-aviso {
+            font-size: 11px; color: #856404;
+            background: #fff3cd; border: 1px solid #ffc107;
+            border-radius: 4px; padding: 4px 10px; margin-top: 4px;
+        }
     </style>
 </head>
 <body class="main-layout">
@@ -91,176 +248,362 @@
                 <div class="box_text">
 
                     <h3>Calculadora Nutricional
-                        <small style="font-size:14px; color:#888; font-weight:normal;">(Tabela TACO)</small>
+                        <small style="font-size:14px;color:#888;font-weight:normal;">(Tabela TBCA)</small>
                     </h3>
-                    <p class="text-muted mb-3">Insira os ingredientes, a porção e calcule o rótulo ANVISA automaticamente.</p>
+                    <p class="text-muted mb-4">Insira os ingredientes, a porção e calcule o rótulo ANVISA automaticamente.</p>
 
-                    <div class="row">
+                    <div id="col-esquerda">
 
-                        <!-- ══ COLUNA ESQUERDA: FORMULÁRIO ══ -->
-                        <div class="col-md-6">
-
-                            <h5>Dados do Produto</h5>
-
-                            <div class="mb-2">
-                                <label class="form-label mb-1">Produto *</label>
+                        <!-- 1. Produto -->
+                        <div class="calc-section">
+                            <p class="calc-section-title">1. Produto</p>
+                            <div class="produto-tabs">
+                                <button id="tab-existente" class="active" type="button" onclick="trocarAba('existente')">Produto Existente</button>
+                                <button id="tab-novo" type="button" onclick="trocarAba('novo')">Novo Produto</button>
+                            </div>
+                            <div id="painel-existente">
+                                <label class="form-label mb-1" style="font-size:13px;">Selecione o produto *</label>
                                 <select id="produtoId" class="form-select form-select-sm">
                                     <option value="">Selecione um produto...</option>
-                                    <option th:each="p : ${produtos}"
-                                            th:value="${p.proCodigo}"
-                                            th:text="${p.proNome}"></option>
+                                    <option th:each="p : ${produtos}" th:value="${p.proCodigo}" th:text="${p.proNome}"></option>
                                 </select>
                             </div>
+                            <div id="painel-novo" style="display:none;">
+                                <div class="mb-2">
+                                    <label class="form-label mb-1" style="font-size:13px;">Nome do produto *</label>
+                                    <input type="text" id="novoNome" class="form-control form-control-sm" placeholder="Ex: Bolo de Cenoura">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label mb-1" style="font-size:13px;">Nome Fantasia</label>
+                                    <input type="text" id="novoNomeFantasia" class="form-control form-control-sm" placeholder="Ex: Quitandas da Duda">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label mb-1" style="font-size:13px;">Fabricante *</label>
+                                    <select id="novoFabricante" class="form-select form-select-sm">
+                                        <option value="">Selecione o fabricante...</option>
+                                        <option th:each="f : ${fabricantes}" th:value="${f.fabCodigo}" th:text="${f.fabNome}"></option>
+                                    </select>
+                                </div>
+                                <div class="row g-2 mb-2">
+                                    <div class="col-6">
+                                        <label class="form-label mb-1" style="font-size:13px;">Data de Fabricação</label>
+                                        <input type="date" id="novoDataFabricacao" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label mb-1" style="font-size:13px;">Data de Vencimento</label>
+                                        <input type="date" id="novoDataVencimento" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label mb-1" style="font-size:13px;">
+                                        Peso real do produto final (g)
+                                        <span style="font-size:10px;color:#888;font-weight:normal;">— usado para calcular porções/embalagem</span>
+                                    </label>
+                                    <input type="number" id="novoPeso" class="form-control form-control-sm"
+                                           placeholder="Ex: 200" min="0" step="0.1"
+                                           oninput="calcularPorcoesAuto()">
+                                    <div id="peso-produto-aviso" class="peso-produto-aviso" style="display:none;">
+                                        ℹ️ O peso real do produto (campo acima) está sendo usado para calcular as porções.
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="form-label mb-1" style="font-size:13px;">Recomendações de uso / armazenamento</label>
+                                    <textarea id="novoRecomendacoes" class="form-control form-control-sm" rows="2" placeholder="Ex: Manter sob refrigeração após aberto."></textarea>
+                                </div>
+                            </div>
+                        </div>
 
-                            <div class="row g-2 mb-2">
+                        <!-- 2. Porção -->
+                        <div class="calc-section">
+                            <p class="calc-section-title">2. Dados da Porção</p>
+                            <div class="row g-2">
                                 <div class="col-4">
-                                    <label class="form-label mb-1">Porção (g/ml) *</label>
+                                    <label class="form-label mb-1" style="font-size:13px;">Porção (g/ml) *</label>
                                     <input type="number" id="porcao" class="form-control form-control-sm"
-                                           value="100" min="1" step="0.1">
+                                           value="100" min="1" step="0.1" oninput="calcularPorcoesAuto()">
                                 </div>
                                 <div class="col-4">
-                                    <label class="form-label mb-1">Unidade</label>
+                                    <!--
+                                        CORREÇÃO C5: unidadeId é obrigatório no backend.
+                                        Adicionado indicador visual de campo obrigatório.
+                                    -->
+                                    <label class="form-label mb-1" style="font-size:13px;">Unidade *</label>
                                     <select id="unidadeId" class="form-select form-select-sm">
-                                        <option value="">—</option>
-                                        <option th:each="u : ${unidades}"
-                                                th:value="${u.undCodigo}"
-                                                th:text="${u.undNome}"></option>
+                                        <option value="">— Selecione —</option>
+                                        <option th:each="u : ${unidades}" th:value="${u.undCodigo}" th:text="${u.undNome}"></option>
                                     </select>
                                 </div>
                                 <div class="col-4">
-                                    <label class="form-label mb-1">Porções/embalagem</label>
+                                    <label class="form-label mb-1" style="font-size:13px;">
+                                        Porções/emb.
+                                        <span style="font-size:10px;color:#2e6b1e;font-weight:normal;">✎ editável</span>
+                                    </label>
                                     <input type="number" id="totalPorcoes" class="form-control form-control-sm"
-                                           value="1" min="1" step="1">
+                                           value="1" min="1" step="1"
+                                           oninput="sincronizarPorcoesRotulo()">
                                 </div>
-                                <div class="col-4">
-                                    <label class="form-label mb-1">Colheres/Copos</label>
-                                    <input type="number" id="totalColheres" class="form-control form-control-sm"
-                                           value="0" min="0" step="0.5">
+                                <div class="col-12">
+                                    <label class="form-label mb-1" style="font-size:13px;">Medida caseira</label>
+                                    <input type="text" id="medidaCaseira" class="form-control form-control-sm"
+                                           placeholder="Ex: 1 fatia, 2 colheres de sopa, 1 xícara">
                                 </div>
                             </div>
+                            <div id="peso-info" class="peso-info" style="display:none;">
+                                Peso calculado dos ingredientes: <strong id="peso-total-display">0</strong> g
+                                → sugestão: <strong id="porcoes-display">0</strong> porção(ões)
+                                <span style="color:#888;font-size:10px;">(você pode editar o campo acima)</span>
+                            </div>
+                        </div>
 
-                            <hr class="my-3">
-
+                        <!-- 3. Ingredientes -->
+                        <div class="calc-section">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h5 class="mb-0">Ingredientes</h5>
+                                <p class="calc-section-title mb-0">3. Ingredientes</p>
                                 <button type="button" class="btn btn-sm btn-outline-success"
-                                        onclick="adicionarIngrediente()">
+                                        onclick="adicionarIngrediente()" style="font-size:12px;">
                                     <i class="fa fa-plus"></i> Adicionar
                                 </button>
                             </div>
-
+                            <div class="d-flex gap-2 mb-1" style="font-size:11px;color:#999;padding:0 2px;">
+                                <span style="flex:2;">Ingrediente (TBCA)</span>
+                                <span style="flex:1;">Qtd</span>
+                                <span style="flex:0 0 64px;">Unidade</span>
+                                <span style="flex:0 0 36px;"></span>
+                            </div>
                             <div id="ingredientes-container"></div>
+                            <div id="msg-erro" class="alert alert-danger mt-2 mb-0" style="display:none;"></div>
+                        </div>
 
-                            <div id="msg-erro" class="alert alert-danger mt-2" style="display:none;"></div>
+                        <!-- Botões -->
+                        <div class="d-flex gap-2 flex-wrap mb-4">
+                            <button type="button" class="btn btn-primary" onclick="calcular()">
+                                <i class="fa fa-calculator"></i> Calcular Rótulo
+                            </button>
+                            <button type="button" id="btn-salvar" class="btn btn-success"
+                                    style="display:none;" onclick="salvar()">
+                                <i class="fa fa-save"></i> Salvar
+                            </button>
+                            <a th:href="@{/tabela}" class="btn btn-secondary">Voltar</a>
+                        </div>
 
-                            <div class="mt-3 d-flex gap-2 flex-wrap">
-                                <button type="button" class="btn btn-primary" onclick="calcular()">
-                                    <i class="fa fa-calculator"></i> Calcular Rótulo
-                                </button>
-                                <button type="button" id="btn-salvar" class="btn btn-success"
-                                        style="display:none;" onclick="salvar()">
-                                    <i class="fa fa-save"></i> Salvar
-                                </button>
-                                <a th:href="@{/tabela}" class="btn btn-secondary">Voltar</a>
+                    </div><!-- col-esquerda -->
+
+                    <!-- ══ RÓTULO ══ -->
+                    <div id="col-direita" style="display:none;">
+                        <div id="rotulo-preview">
+                            <h5 class="mb-1">Rótulo ANVISA
+                                <small style="font-size:10px;color:#888;font-weight:normal;">RDC 429/2020 · IN 75/2020</small>
+                            </h5>
+                            <div class="rotulo-edit-hint mb-2">
+                                <span class="swatch"></span>
+                                Campos com fundo amarelo são editáveis — clique para corrigir qualquer valor diretamente no rótulo.
                             </div>
 
-                        </div><!-- col esquerda -->
+                            <div class="rotulo-wrapper">
+                            <div class="rotulo-anvisa">
 
-                        <!-- ══ COLUNA DIREITA: RÓTULO ══ -->
-                        <div class="col-md-6">
-                            <div id="rotulo-preview" style="display:none;">
-                                <h5>Rótulo ANVISA</h5>
-                                <div class="rotulo-anvisa">
+                                <div class="r-titulo">Informação Nutricional</div>
 
-                                    <div class="r-titulo">Informação Nutricional</div>
-
-                                    <div class="r-porcao-bloco">
+                                <div class="r-porcao-bloco">
+                                    <div class="r-porcao-linha1">
+                                        <span>Porção de
+                                            <input type="number" id="rv-porcao" class="rv-edit rv-edit-porcao"
+                                                   value="—" min="1" step="0.1"
+                                                   oninput="sincronizarPorcaoFormulario(); recalcularVDs()">
+                                            <input type="text" id="rv-unidade" class="rv-edit"
+                                                   style="width:30px;font-size:11px;text-align:left;" value="">
+                                        </span>
                                         <span class="r-total-porcoes">
                                             Porções por embalagem:
-                                            <strong id="rv-totalPorcoes">—</strong>
-                                        </span>
-                                        Porção de
-                                        <span class="r-porcao-valor" id="rv-porcao">—</span>
-                                        <span id="rv-unidade"></span>
-                                        <div id="rv-colheres" style="font-size:11px; clear:both;"></div>
-                                    </div>
-
-                                    <div class="r-divisor-grosso"></div>
-
-                                    <div class="r-header-colunas">
-                                        <span>Qtd por porção</span>
-                                        <span>%VD*</span>
-                                    </div>
-
-                                    <div class="r-energia-bloco">
-                                        <span class="r-energia-label">Valor Energético</span>
-                                        <span class="r-energia-valor">
-                                            <span id="rv-energia">—</span> kcal
-                                        </span>
-                                        <span class="r-energia-vd">
-                                            <strong id="rv-vdEnergia">**</strong>
+                                            <input type="number" id="rv-totalPorcoes" class="rv-edit rv-edit-totalp"
+                                                   value="—" min="1" step="1"
+                                                   oninput="sincronizarPorcoesFormulario()">
                                         </span>
                                     </div>
+                                    <div class="r-medida-caseira">
+                                        <input type="text" id="rv-medida" class="rv-edit rv-edit-medida"
+                                               placeholder="Medida caseira (opcional)" value="">
+                                    </div>
+                                </div>
 
-                                    <div class="r-divisor-medio"></div>
+                                <div class="r-divisor-grosso"></div>
 
-                                    <div class="r-nutriente">
-                                        <span class="r-nome"><strong>Carboidratos</strong></span>
-                                        <span class="r-valor"><span id="rv-carb">—</span> g</span>
-                                        <span class="r-vd" id="rv-vdCarb">**</span>
-                                    </div>
-                                    <div class="r-nutriente" style="padding-left:16px;">
-                                        <span class="r-nome">Açúcares Totais</span>
-                                        <span class="r-valor">— g</span>
-                                        <span class="r-vd">**</span>
-                                    </div>
-                                    <div class="r-nutriente" style="padding-left:16px;">
-                                        <span class="r-nome">Açúcares Adicionados</span>
-                                        <span class="r-valor">— g</span>
-                                        <span class="r-vd">**</span>
-                                    </div>
-                                    <div class="r-nutriente">
-                                        <span class="r-nome"><strong>Proteínas</strong></span>
-                                        <span class="r-valor"><span id="rv-prot">—</span> g</span>
-                                        <span class="r-vd" id="rv-vdProt">**</span>
-                                    </div>
-                                    <div class="r-nutriente">
-                                        <span class="r-nome"><strong>Gorduras Totais</strong></span>
-                                        <span class="r-valor"><span id="rv-lip">—</span> g</span>
-                                        <span class="r-vd" id="rv-vdLip">**</span>
-                                    </div>
-                                    <div class="r-nutriente" style="padding-left:16px;">
-                                        <span class="r-nome">Gorduras Saturadas</span>
-                                        <span class="r-valor"><span id="rv-sat">—</span> g</span>
-                                        <span class="r-vd" id="rv-vdSat">**</span>
-                                    </div>
-                                    <div class="r-nutriente" style="padding-left:16px;">
-                                        <span class="r-nome">Gorduras Trans</span>
-                                        <span class="r-valor">0 g</span>
-                                        <span class="r-vd">**</span>
-                                    </div>
-                                    <div class="r-nutriente">
-                                        <span class="r-nome"><strong>Fibra Alimentar</strong></span>
-                                        <span class="r-valor"><span id="rv-fibra">—</span> g</span>
-                                        <span class="r-vd" id="rv-vdFibra">**</span>
-                                    </div>
-                                    <div class="r-nutriente">
-                                        <span class="r-nome"><strong>Sódio</strong></span>
-                                        <span class="r-valor"><span id="rv-sodio">—</span> mg</span>
-                                        <span class="r-vd" id="rv-vdSodio">**</span>
-                                    </div>
+                                <div class="r-grid r-header">
+                                    <span></span>
+                                    <span>100 g</span>
+                                    <span id="rv-header-porcao">Por porção</span>
+                                    <span>%VD*</span>
+                                </div>
 
-                                    <div class="r-rodape">
-                                        * Percentual de Valores Diários fornecidos pela porção.<br>
-                                        ** VD não estabelecido.<br>
-                                        Valores Diários de referência com base em uma dieta de 2000 kcal ou 8400 kJ.
-                                    </div>
+                                <!-- Valor Energético
+                                    CORREÇÃO S2: energia usa fmtInt() → inteiro, não toFixed(1).
+                                    Os inputs rv-energia* recebem valores inteiros.
+                                -->
+                                <div class="r-grid r-energia">
+                                    <span class="rn">Valor Energético (kcal/kJ)</span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-energia100g" class="rv-edit rv-edit-num"
+                                               placeholder="—" step="1" oninput="recalcularEnergiaPorcao()">
+                                        kcal
+                                        <span class="kj">
+                                            <input type="number" id="rv-energiaKj100g" class="rv-edit rv-edit-num"
+                                                   placeholder="—" step="1"> kJ
+                                        </span>
+                                    </span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-energiaPorcao" class="rv-edit rv-edit-num"
+                                               placeholder="—" step="1" oninput="recalcularVDEnergia()">
+                                        kcal
+                                        <span class="kj">
+                                            <input type="number" id="rv-energiaKjPorcao" class="rv-edit rv-edit-num"
+                                                   placeholder="—" step="1"> kJ
+                                        </span>
+                                    </span>
+                                    <span class="rvd">
+                                        <input type="text" id="rv-vdEnergia" class="rv-edit rv-edit-vd" value="**">
+                                    </span>
+                                </div>
 
-                                </div><!-- rotulo-anvisa -->
-                            </div><!-- rotulo-preview -->
-                        </div><!-- col direita -->
+                                <div class="r-divisor-medio"></div>
 
-                    </div><!-- row -->
+                                <!-- Carboidratos -->
+                                <div class="r-grid r-nut">
+                                    <span class="rn">Carboidratos (g)</span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-carb100g" class="rv-edit rv-edit-num"
+                                               placeholder="—" step="0.1" oninput="recalcularPorcao('carb')">
+                                    </span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-carbPorcao" class="rv-edit rv-edit-num"
+                                               placeholder="—" step="0.1" oninput="recalcularVD('Carb', 300)">
+                                    </span>
+                                    <span class="rvd">
+                                        <input type="text" id="rv-vdCarb" class="rv-edit rv-edit-vd" value="**">
+                                    </span>
+                                </div>
+                                <!-- Açúcares Totais -->
+                                <div class="r-grid r-nut r-sub">
+                                    <span class="rn">Açúcares Totais (g)</span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-acucar100g" class="rv-edit rv-edit-num"
+                                               placeholder="—" step="0.1" oninput="recalcularPorcao('acucar')">
+                                    </span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-acucarPorcao" class="rv-edit rv-edit-num"
+                                               placeholder="—" step="0.1">
+                                    </span>
+                                    <span class="rvd">**</span>
+                                </div>
+                                <!-- Açúcares Adicionados -->
+                                <div class="r-grid r-nut r-sub">
+                                    <span class="rn">Açúcares Adicionados (g)</span>
+                                    <span class="rv">N.D.</span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-acucarAdicionadoPorcao"
+                                               class="rv-edit rv-edit-num" placeholder="0.0" min="0" step="0.1">
+                                    </span>
+                                    <span class="rvd">**</span>
+                                </div>
+                                <!-- Proteínas -->
+                                <div class="r-grid r-nut">
+                                    <span class="rn">Proteínas (g)</span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-prot100g" class="rv-edit rv-edit-num"
+                                               placeholder="—" step="0.1" oninput="recalcularPorcao('prot')">
+                                    </span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-protPorcao" class="rv-edit rv-edit-num"
+                                               placeholder="—" step="0.1" oninput="recalcularVD('Prot', 75)">
+                                    </span>
+                                    <span class="rvd">
+                                        <input type="text" id="rv-vdProt" class="rv-edit rv-edit-vd" value="**">
+                                    </span>
+                                </div>
+                                <!-- Gorduras Totais -->
+                                <div class="r-grid r-nut">
+                                    <span class="rn">Gorduras Totais (g)</span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-lip100g" class="rv-edit rv-edit-num"
+                                               placeholder="—" step="0.1" oninput="recalcularPorcao('lip')">
+                                    </span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-lipPorcao" class="rv-edit rv-edit-num"
+                                               placeholder="—" step="0.1" oninput="recalcularVD('Lip', 55)">
+                                    </span>
+                                    <span class="rvd">
+                                        <input type="text" id="rv-vdLip" class="rv-edit rv-edit-vd" value="**">
+                                    </span>
+                                </div>
+                                <!-- Gorduras Saturadas -->
+                                <div class="r-grid r-nut r-sub">
+                                    <span class="rn">Gorduras Saturadas (g)</span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-sat100g" class="rv-edit rv-edit-num"
+                                               placeholder="—" step="0.1" oninput="recalcularPorcao('sat')">
+                                    </span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-satPorcao" class="rv-edit rv-edit-num"
+                                               placeholder="—" step="0.1" oninput="recalcularVD('Sat', 22)">
+                                    </span>
+                                    <span class="rvd">
+                                        <input type="text" id="rv-vdSat" class="rv-edit rv-edit-vd" value="**">
+                                    </span>
+                                </div>
+                                <!-- Gorduras Trans -->
+                                <div class="r-grid r-nut r-sub">
+                                    <span class="rn">Gorduras Trans (g)</span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-trans100g" class="rv-edit rv-edit-num"
+                                               placeholder="0" step="0.1" value="0">
+                                    </span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-transPorcao" class="rv-edit rv-edit-num"
+                                               placeholder="0" step="0.1" value="0">
+                                    </span>
+                                    <span class="r-trans-vd">VD não<br>estabel.</span>
+                                </div>
+                                <!-- Fibra Alimentar -->
+                                <div class="r-grid r-nut">
+                                    <span class="rn">Fibra Alimentar (g)</span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-fibra100g" class="rv-edit rv-edit-num"
+                                               placeholder="—" step="0.1" oninput="recalcularPorcao('fibra')">
+                                    </span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-fibraPorcao" class="rv-edit rv-edit-num"
+                                               placeholder="—" step="0.1" oninput="recalcularVD('Fibra', 25)">
+                                    </span>
+                                    <span class="rvd">
+                                        <input type="text" id="rv-vdFibra" class="rv-edit rv-edit-vd" value="**">
+                                    </span>
+                                </div>
+                                <!-- Sódio (mg) — step=1 pois é inteiro -->
+                                <div class="r-grid r-nut">
+                                    <span class="rn">Sódio (mg)</span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-sodio100g" class="rv-edit rv-edit-num"
+                                               placeholder="—" step="1" oninput="recalcularPorcao('sodio')">
+                                    </span>
+                                    <span class="rv">
+                                        <input type="number" id="rv-sodioPorcao" class="rv-edit rv-edit-num"
+                                               placeholder="—" step="1" oninput="recalcularVD('Sodio', 2400)">
+                                    </span>
+                                    <span class="rvd">
+                                        <input type="text" id="rv-vdSodio" class="rv-edit rv-edit-vd" value="**">
+                                    </span>
+                                </div>
+
+                                <div class="r-rodape">
+                                    * Percentual de Valores Diários fornecidos pela porção.<br>
+                                    ** VD não estabelecido.<br>
+                                    N.D. Não disponível na base de dados utilizada (TBCA).<br>
+                                    Valores Diários de referência com base em uma dieta de 2000 kcal ou 8400 kJ.
+                                </div>
+
+                            </div><!-- .rotulo-anvisa -->
+                            </div><!-- .rotulo-wrapper -->
+                        </div>
+                    </div><!-- col-direita -->
 
                 </div><!-- box_text -->
             </div>
@@ -268,14 +611,21 @@
     </div>
 </div>
 
-<!-- Form oculto para POST salvar -->
+<!-- Form oculto para salvar -->
 <form id="form-salvar" th:action="@{/calculadora/salvar}" method="post" style="display:none;">
-    <input type="hidden" name="produtoId"        id="fs-produtoId">
-    <input type="hidden" name="unidadeId"        id="fs-unidadeId">
-    <input type="hidden" name="porcao"           id="fs-porcao">
-    <input type="hidden" name="totalPorcoes"     id="fs-totalPorcoes">
-    <input type="hidden" name="totalColheres"    id="fs-totalColheres">
-    <input type="hidden" name="ingredientesJson" id="fs-ingredientesJson">
+    <input type="hidden" name="produtoId"           id="fs-produtoId">
+    <input type="hidden" name="novoNome"            id="fs-novoNome">
+    <input type="hidden" name="novoNomeFantasia"    id="fs-novoNomeFantasia">
+    <input type="hidden" name="novoFabricanteId"    id="fs-novoFabricanteId">
+    <input type="hidden" name="novoDataFabricacao"  id="fs-novoDataFabricacao">
+    <input type="hidden" name="novoDataVencimento"  id="fs-novoDataVencimento">
+    <input type="hidden" name="novoPeso"            id="fs-novoPeso">
+    <input type="hidden" name="novoRecomendacoes"   id="fs-novoRecomendacoes">
+    <input type="hidden" name="unidadeId"           id="fs-unidadeId">
+    <input type="hidden" name="porcao"              id="fs-porcao">
+    <input type="hidden" name="totalPorcoes"        id="fs-totalPorcoes">
+    <input type="hidden" name="totalColheres"       id="fs-totalColheres">
+    <input type="hidden" name="ingredientesJson"    id="fs-ingredientesJson">
 </form>
 
 <div th:replace="~{rodape :: rodape}"></div>
@@ -285,15 +635,137 @@
 <script>
 $(window).on('load', function () { $('.loader_bg').fadeOut('slow'); });
 
-/* ── Carrega TACO ── */
+// ── Constantes ────────────────────────────────────────────────────────────────
+const MAX_PORCOES = 9999;
+const MIN_PORCOES = 1;
+const KCAL_TO_KJ  = 4.184;  // IN 75/2020 — single source of truth no JS
+
 let tacoData = [];
+let contIdx  = 0;
+let abaAtiva = 'existente';
+
+/** Valores calculados pelo backend — NUNCA capturar do rótulo editável ao salvar */
+let valoresCalculados = null;
+
 fetch('/calculadora/taco-dados')
     .then(r => r.json())
     .then(data => { tacoData = data; })
-    .catch(() => console.warn('Erro ao carregar TACO'));
+    .catch(() => console.warn('Erro ao carregar TBCA'));
 
-/* ── Ingredientes ── */
-let contIdx = 0;
+function trocarAba(aba) {
+    abaAtiva = aba;
+    document.getElementById('painel-existente').style.display = aba === 'existente' ? '' : 'none';
+    document.getElementById('painel-novo').style.display      = aba === 'novo'      ? '' : 'none';
+    document.getElementById('tab-existente').classList.toggle('active', aba === 'existente');
+    document.getElementById('tab-novo').classList.toggle('active', aba === 'novo');
+}
+
+const DENSIDADE = {
+    'agua':1.0,'leite':1.03,'oleo':0.92,'azeite':0.915,
+    'vinagre':1.01,'mel':1.4,'cachaça':0.93,'cerveja':1.0,
+    'vinho':0.99,'suco':1.04,'iogurte':1.05,'creme':1.0,
+};
+
+function getDensidade(nomeBruto) {
+    const n = normalizar(nomeBruto || '');
+    for (const [chave, dens] of Object.entries(DENSIDADE)) {
+        if (n.includes(chave)) return dens;
+    }
+    return 1.0;
+}
+
+function converterParaGramas(qtd, unidade, nomeIngrediente) {
+    switch (unidade) {
+        case 'g':    return qtd;
+        case 'kg':   return qtd * 1000;
+        case 'ml':   return qtd * getDensidade(nomeIngrediente);
+        case 'L':    return qtd * 1000 * getDensidade(nomeIngrediente);
+        case 'unid': return qtd * 60;
+        default:     return qtd;
+    }
+}
+
+function atualizarConversao(idx) {
+    const qtdEl  = document.getElementById('ing-qtd-'  + idx);
+    const undEl  = document.getElementById('ing-und-'  + idx);
+    const nomeEl = document.getElementById('ing-nome-' + idx);
+    const convEl = document.getElementById('ing-conv-' + idx);
+    if (!qtdEl || !undEl || !convEl) return;
+    const qtd  = parseFloat(qtdEl.value) || 0;
+    const und  = undEl.value;
+    const nome = nomeEl ? nomeEl.value : '';
+    if (qtd <= 0 || und === 'g') { convEl.textContent = ''; return; }
+    const emGramas = converterParaGramas(qtd, und, nome);
+    convEl.textContent = '≈ ' + emGramas.toFixed(1) + ' g';
+    if ((und === 'L' || und === 'ml') && getDensidade(nome) !== 1.0)
+        convEl.textContent += ' (densidade ' + getDensidade(nome) + ')';
+    if (und === 'unid') convEl.textContent += ' (60g/unid)';
+}
+
+function calcularPesoTotal() {
+    let total = 0;
+    document.querySelectorAll('.ing-row').forEach(row => {
+        const idx  = row.id.replace('ing-row-', '');
+        const qtd  = parseFloat((document.getElementById('ing-qtd-' + idx) || {}).value) || 0;
+        const und  = (document.getElementById('ing-und-'  + idx) || {}).value || 'g';
+        const nome = (document.getElementById('ing-nome-' + idx) || {}).value || '';
+        total += converterParaGramas(qtd, und, nome);
+    });
+    return total;
+}
+
+function calcularPorcoesAuto() {
+    const porcao = parseFloat(document.getElementById('porcao').value) || 0;
+    const pesoProdutoInput = document.getElementById('novoPeso');
+    const pesoProduto = pesoProdutoInput ? (parseFloat(pesoProdutoInput.value) || 0) : 0;
+    const pesoIngredientes = calcularPesoTotal();
+    const pesoBase = pesoProduto > 0 ? pesoProduto : pesoIngredientes;
+
+    let porcoes = 1;
+    if (porcao > 0 && pesoBase > 0) {
+        porcoes = Math.floor(pesoBase / porcao);
+    }
+    porcoes = Math.min(MAX_PORCOES, Math.max(MIN_PORCOES, porcoes));
+
+    document.getElementById('totalPorcoes').value = porcoes;
+
+    const aviso = document.getElementById('peso-produto-aviso');
+    if (aviso) aviso.style.display = pesoProduto > 0 ? '' : 'none';
+
+    if (pesoIngredientes > 0) {
+        document.getElementById('peso-info').style.display = '';
+        document.getElementById('peso-total-display').textContent = pesoIngredientes.toFixed(1);
+        document.getElementById('porcoes-display').textContent = Math.floor(pesoIngredientes / porcao) || 1;
+    } else {
+        document.getElementById('peso-info').style.display = 'none';
+    }
+    sincronizarPorcoesRotulo();
+}
+
+function sincronizarPorcoesRotulo() {
+    const v = document.getElementById('totalPorcoes').value;
+    const el = document.getElementById('rv-totalPorcoes');
+    if (el && v) el.value = v;
+}
+
+function sincronizarPorcoesFormulario() {
+    let v = parseInt(document.getElementById('rv-totalPorcoes').value) || 1;
+    v = Math.min(MAX_PORCOES, Math.max(MIN_PORCOES, v));
+    document.getElementById('rv-totalPorcoes').value = v;
+    const el = document.getElementById('totalPorcoes');
+    if (el) el.value = v;
+}
+
+/**
+ * CORREÇÃO I2: sincroniza porção editada no rótulo de volta ao campo formulário.
+ * Isso garante que o backend receba a porção que o usuário viu e aprovou no rótulo.
+ */
+function sincronizarPorcaoFormulario() {
+    const rvPorcao = parseFloat(document.getElementById('rv-porcao').value) || 0;
+    if (rvPorcao > 0) {
+        document.getElementById('porcao').value = rvPorcao;
+    }
+}
 
 function adicionarIngrediente() {
     const idx = contIdx++;
@@ -301,23 +773,36 @@ function adicionarIngrediente() {
     row.className = 'ing-row';
     row.id = 'ing-row-' + idx;
     row.innerHTML = `
-        <div class="ing-nome ac-wrap">
-            <input type="text" class="form-control form-control-sm"
-                   id="ing-nome-${idx}" placeholder="Digite o ingrediente..."
-                   autocomplete="off">
-            <div class="ac-list" id="ac-list-${idx}"></div>
-            <div id="ac-info-${idx}" class="ac-found"></div>
+        <div style="display:flex;gap:8px;align-items:flex-start;width:100%;">
+            <div class="ing-nome ac-wrap">
+                <input type="text" class="form-control form-control-sm"
+                       id="ing-nome-${idx}" placeholder="Digite o ingrediente..."
+                       autocomplete="off">
+                <div class="ac-list" id="ac-list-${idx}"></div>
+                <div id="ac-info-${idx}" class="ac-found"></div>
+            </div>
+            <div class="ing-qtd">
+                <input type="number" class="form-control form-control-sm"
+                       id="ing-qtd-${idx}" placeholder="0" min="0.001" step="0.001"
+                       oninput="atualizarConversao(${idx}); calcularPorcoesAuto()">
+            </div>
+            <div class="ing-und">
+                <select class="form-select form-select-sm" id="ing-und-${idx}"
+                        onchange="atualizarConversao(${idx}); calcularPorcoesAuto()">
+                    <option value="g">g</option>
+                    <option value="kg">kg</option>
+                    <option value="ml">ml</option>
+                    <option value="L">L</option>
+                    <option value="unid">unid</option>
+                </select>
+            </div>
+            <div class="ing-del">
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="remover(${idx})">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </div>
         </div>
-        <div class="ing-qtd">
-            <input type="number" class="form-control form-control-sm"
-                   id="ing-qtd-${idx}" placeholder="g/ml" min="0.1" step="0.1">
-        </div>
-        <div class="ing-del">
-            <button type="button" class="btn btn-sm btn-outline-danger"
-                    onclick="remover(${idx})">
-                <i class="fa fa-trash"></i>
-            </button>
-        </div>`;
+        <div id="ing-conv-${idx}" class="ing-conv" style="padding-left:4px;margin-bottom:4px;"></div>`;
     document.getElementById('ingredientes-container').appendChild(row);
 
     const input = document.getElementById('ing-nome-' + idx);
@@ -328,7 +813,6 @@ function adicionarIngrediente() {
         const val = normalizar(this.value);
         list.innerHTML = '';
         if (val.length < 2) { list.style.display = 'none'; return; }
-
         const tokens = val.split(/\s+/);
         let matches = tacoData.filter(item =>
             tokens.every(t => normalizar(item.descricao).includes(t))
@@ -339,14 +823,11 @@ function adicionarIngrediente() {
             if (db.startsWith(val)) return 1;
             return a.descricao.localeCompare(b.descricao);
         });
-
         if (!matches.length) { list.style.display = 'none'; return; }
-
         matches.slice(0, 10).forEach(item => {
             const div = document.createElement('div');
             div.className = 'ac-item';
-            div.innerHTML = item.descricao +
-                '<span class="ac-cat">[' + item.categoria + ']</span>';
+            div.innerHTML = item.descricao + '<span class="ac-cat">[' + item.categoria + ']</span>';
             div.onclick = () => {
                 input.value = item.descricao;
                 list.style.display = 'none';
@@ -357,15 +838,15 @@ function adicionarIngrediente() {
         list.style.display = 'block';
     });
 
-    document.addEventListener('click', function (e) {
-        if (!list.contains(e.target) && e.target !== input)
-            list.style.display = 'none';
+    document.addEventListener('click', e => {
+        if (!list.contains(e.target) && e.target !== input) list.style.display = 'none';
     });
 }
 
 function remover(idx) {
     const r = document.getElementById('ing-row-' + idx);
     if (r) r.remove();
+    calcularPorcoesAuto();
 }
 
 function normalizar(s) {
@@ -374,25 +855,23 @@ function normalizar(s) {
         .replace(/[-,.]/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
-/* ── Coleta ingredientes ── */
 function coletarIngredientes() {
     const lista = [];
     document.querySelectorAll('.ing-row').forEach(row => {
         const idx  = row.id.replace('ing-row-', '');
         const nome = (document.getElementById('ing-nome-' + idx) || {}).value || '';
-        const qtd  = parseFloat((document.getElementById('ing-qtd-'  + idx) || {}).value) || 0;
-        if (nome.trim() && qtd > 0) lista.push({ nome: nome.trim(), quantidade: qtd });
+        const qtd  = parseFloat((document.getElementById('ing-qtd-' + idx) || {}).value) || 0;
+        const und  = (document.getElementById('ing-und-'  + idx) || {}).value || 'g';
+        if (nome.trim() && qtd > 0) {
+            lista.push({ nome: nome.trim(), quantidade: converterParaGramas(qtd, und, nome) });
+        }
     });
     return lista;
 }
 
-/* ── Calcular (AJAX) ── */
 function calcular() {
     const ingredientes = coletarIngredientes();
-    if (!ingredientes.length) {
-        mostrarErro('Adicione pelo menos um ingrediente com quantidade.');
-        return;
-    }
+    if (!ingredientes.length) { mostrarErro('Adicione pelo menos um ingrediente com quantidade.'); return; }
     const porcao = parseFloat(document.getElementById('porcao').value) || 100;
 
     fetch('/calculadora/calcular?porcao=' + porcao, {
@@ -402,59 +881,194 @@ function calcular() {
     })
     .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(v => {
+        if (v.erro) { mostrarErro(v.erro); return; }
+        valoresCalculados = v;
+        calcularPorcoesAuto();
         preencherRotulo(v, porcao);
-        document.getElementById('rotulo-preview').style.display = 'block';
+        document.getElementById('col-direita').style.display = '';
         document.getElementById('btn-salvar').style.display = 'inline-block';
         esconderErro();
+        document.getElementById('col-direita').scrollIntoView({ behavior: 'smooth', block: 'start' });
     })
-    .catch(err => mostrarErro('Erro ao calcular. Verifique os ingredientes. (' + err.message + ')'));
+    .catch(err => mostrarErro('Erro ao calcular. (' + err.message + ')'));
 }
 
 function preencherRotulo(v, porcao) {
     const sel     = document.getElementById('unidadeId');
     const undNome = sel.options[sel.selectedIndex]?.text || '';
+    const medida  = document.getElementById('medidaCaseira').value.trim();
+    const totalP  = document.getElementById('totalPorcoes').value || '1';
 
-    set('rv-porcao',       porcao);
-    set('rv-unidade',      undNome === '—' ? '' : undNome);
-    set('rv-totalPorcoes', document.getElementById('totalPorcoes').value || '—');
+    setVal('rv-porcao', porcao);
+    setVal('rv-unidade', undNome === '—' ? '' : undNome);
+    setVal('rv-totalPorcoes', totalP);
 
-    const col = parseFloat(document.getElementById('totalColheres').value) || 0;
-    set('rv-colheres', col > 0 ? '(' + col + ' colher(es)/copo(s))' : '');
+    const undLabel = (undNome && undNome !== '—' && undNome !== '— Selecione —') ? undNome : 'g';
+    const headerEl = document.getElementById('rv-header-porcao');
+    if (headerEl) headerEl.textContent = porcao + ' ' + undLabel;
 
-    set('rv-energia',   v.energiaPorcao);
-    set('rv-vdEnergia', v.vdEnergia > 0 ? v.vdEnergia + '%' : '**');
-    set('rv-carb',      v.carboidratoPorcao);
-    set('rv-vdCarb',    v.vdCarb   > 0 ? v.vdCarb   + '%' : '**');
-    set('rv-prot',      v.proteinaPorcao);
-    set('rv-vdProt',    v.vdProt   > 0 ? v.vdProt   + '%' : '**');
-    set('rv-lip',       v.lipideosPorcao);
-    set('rv-vdLip',     v.vdLip    > 0 ? v.vdLip    + '%' : '**');
-    set('rv-sat',       v.saturadoPorcao);
-    set('rv-vdSat',     v.vdSat    > 0 ? v.vdSat    + '%' : '**');
-    set('rv-fibra',     v.fibraPorcao);
-    set('rv-vdFibra',   v.vdFibra  > 0 ? v.vdFibra  + '%' : '**');
-    set('rv-sodio',     v.sodioPorcao);
-    set('rv-vdSodio',   v.vdSodio  > 0 ? v.vdSodio  + '%' : '**');
+    setVal('rv-medida', medida);
+
+    /*
+     * CORREÇÃO S2: energia e kJ → fmtInt() (inteiro).
+     *              Macros em g → fmt() (1 decimal).
+     *              Sódio em mg → fmtInt() (inteiro).
+     *              %VD → vdFmt() (inteiro, com guard melhorado — ver C4).
+     */
+    setVal('rv-energia100g',     fmtInt(v.energia100g));
+    setVal('rv-energiaKj100g',   fmtInt(v.energiaKj100g));
+    setVal('rv-energiaPorcao',   fmtInt(v.energiaPorcao));
+    setVal('rv-energiaKjPorcao', fmtInt(v.energiaKjPorcao));
+    setVal('rv-vdEnergia',       vdFmt(v.vdEnergia));
+
+    setVal('rv-carb100g',    fmt(v.carboidrato100g));
+    setVal('rv-carbPorcao',  fmt(v.carboidratoPorcao));
+    setVal('rv-vdCarb',      vdFmt(v.vdCarb));
+
+    setVal('rv-acucar100g',    fmt(v.acucaresTotal100g));
+    setVal('rv-acucarPorcao',  fmt(v.acucaresTotalPorcao));
+
+    setVal('rv-prot100g',    fmt(v.proteina100g));
+    setVal('rv-protPorcao',  fmt(v.proteinaPorcao));
+    setVal('rv-vdProt',      vdFmt(v.vdProt));
+
+    setVal('rv-lip100g',    fmt(v.lipideos100g));
+    setVal('rv-lipPorcao',  fmt(v.lipideosPorcao));
+    setVal('rv-vdLip',      vdFmt(v.vdLip));
+
+    setVal('rv-sat100g',    fmt(v.saturado100g));
+    setVal('rv-satPorcao',  fmt(v.saturadoPorcao));
+    setVal('rv-vdSat',      vdFmt(v.vdSat));
+
+    setVal('rv-fibra100g',    fmt(v.fibra100g));
+    setVal('rv-fibraPorcao',  fmt(v.fibraPorcao));
+    setVal('rv-vdFibra',      vdFmt(v.vdFibra));
+
+    // CORREÇÃO I3: sódio em mg → fmtInt
+    setVal('rv-sodio100g',    fmtInt(v.sodio100g));
+    setVal('rv-sodioPorcao',  fmtInt(v.sodioPorcao));
+    setVal('rv-vdSodio',      vdFmt(v.vdSodio));
 }
 
-function set(id, val) {
+function setVal(id, val) {
     const el = document.getElementById(id);
-    if (el) el.textContent = val;
+    if (!el) return;
+    if (el.tagName === 'INPUT') el.value = val;
+    else el.textContent = val;
 }
 
-/* ── Salvar ── */
-function salvar() {
-    const produtoId = document.getElementById('produtoId').value;
-    if (!produtoId) { mostrarErro('Selecione um produto antes de salvar.'); return; }
+/** Macronutrientes em gramas: 1 casa decimal */
+function fmt(val) {
+    if (val === undefined || val === null) return '';
+    return Number(val).toFixed(1);
+}
 
+/**
+ * CORREÇÃO S2: energia (kcal, kJ) e sódio (mg) → inteiro sem casa decimal.
+ * Era: fmt() → "190.7 kcal" | Agora: fmtInt() → "191 kcal"
+ */
+function fmtInt(val) {
+    if (val === undefined || val === null) return '';
+    return String(Math.round(Number(val)));
+}
+
+/**
+ * CORREÇÃO C4: %VD → inteiro. Null/undefined/NaN → "**".
+ * Valor 0 também retorna "**": VD=0% só existe quando o nutriente tem VD estabelecido
+ * mas a quantidade é literalmente zero — o backend retorna 0 nesse caso. Aceita-se
+ * a convenção: 0% mostra "0%", pois o backend (ArredondamentoAnvisa.percentualVD) já
+ * guarda 0 para VD não estabelecido (vdBase ≤ 0). Exibir 0% para gordura trans seria
+ * incorreto se o campo de VD estático "VD não estabel." não estivesse presente.
+ * Como gordura trans usa campo HTML estático, vdFmt() nunca é chamado para ela.
+ * Para os demais nutrientes, 0% é matematicamente válido (ex: sódio = 0 mg).
+ */
+function vdFmt(val) {
+    if (val === undefined || val === null) return '**';
+    const n = Math.round(Number(val));
+    if (isNaN(n)) return '**';
+    return n + '%';
+}
+
+function recalcularPorcao(prefixo) {
+    const porcao = parseFloat(document.getElementById('rv-porcao').value) || 0;
+    const v100   = parseFloat(document.getElementById('rv-' + prefixo + '100g').value) || 0;
+    if (!porcao) return;
+    const vPorcao = v100 * porcao / 100;
+    // sódio é mg → inteiro; resto → 1 decimal
+    const formatted = prefixo === 'sodio' ? fmtInt(vPorcao) : fmt(vPorcao);
+    setVal('rv-' + prefixo + 'Porcao', formatted);
+    const vdMap = { carb:300, prot:75, lip:55, sat:22, fibra:25, sodio:2400 };
+    const vdBase = vdMap[prefixo];
+    if (vdBase) recalcularVD(capitalize(prefixo), vdBase);
+}
+
+function recalcularVD(sufixo, vdBase) {
+    const idPorcao = 'rv-' + sufixo.charAt(0).toLowerCase() + sufixo.slice(1) + 'Porcao';
+    const vPorcao  = parseFloat(document.getElementById(idPorcao)?.value) || 0;
+    const vd       = vdBase > 0 ? Math.round(vPorcao / vdBase * 100) + '%' : '**';
+    setVal('rv-vd' + sufixo, vd);
+}
+
+function recalcularEnergiaPorcao() {
+    const porcao = parseFloat(document.getElementById('rv-porcao').value) || 0;
+    const v100   = parseFloat(document.getElementById('rv-energia100g').value) || 0;
+    if (!porcao) return;
+    const vPorcao = Math.round(v100 * porcao / 100);
+    setVal('rv-energiaPorcao', vPorcao);
+    // CORREÇÃO S2: kJ também inteiro
+    setVal('rv-energiaKj100g',   fmtInt(v100 * KCAL_TO_KJ));
+    setVal('rv-energiaKjPorcao', fmtInt(vPorcao * KCAL_TO_KJ));
+    recalcularVDEnergia();
+}
+
+function recalcularVDEnergia() {
+    const vPorcao = parseFloat(document.getElementById('rv-energiaPorcao').value) || 0;
+    setVal('rv-vdEnergia', Math.round(vPorcao / 2000 * 100) + '%');
+}
+
+function recalcularVDs() {
+    recalcularEnergiaPorcao();
+    ['carb', 'prot', 'lip', 'sat', 'fibra', 'sodio', 'acucar'].forEach(p => recalcularPorcao(p));
+}
+
+function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+function salvar() {
     const ingredientes = coletarIngredientes();
     if (!ingredientes.length) { mostrarErro('Adicione ingredientes.'); return; }
 
-    document.getElementById('fs-produtoId').value       = produtoId;
-    document.getElementById('fs-unidadeId').value       = document.getElementById('unidadeId').value;
-    document.getElementById('fs-porcao').value          = document.getElementById('porcao').value;
-    document.getElementById('fs-totalPorcoes').value    = document.getElementById('totalPorcoes').value;
-    document.getElementById('fs-totalColheres').value   = document.getElementById('totalColheres').value;
+    if (!valoresCalculados) { mostrarErro('Clique em "Calcular Rótulo" antes de salvar.'); return; }
+
+    // CORREÇÃO C5: validar unidadeId obrigatório antes de submeter
+    const unidadeId = document.getElementById('unidadeId').value;
+    if (!unidadeId) { mostrarErro('Selecione a unidade de medida (campo obrigatório).'); return; }
+
+    if (abaAtiva === 'existente') {
+        const produtoId = document.getElementById('produtoId').value;
+        if (!produtoId) { mostrarErro('Selecione um produto antes de salvar.'); return; }
+        document.getElementById('fs-produtoId').value = produtoId;
+        ['fs-novoNome','fs-novoNomeFantasia','fs-novoFabricanteId',
+         'fs-novoDataFabricacao','fs-novoDataVencimento','fs-novoPeso','fs-novoRecomendacoes']
+            .forEach(id => document.getElementById(id).value = '');
+    } else {
+        const nome = document.getElementById('novoNome').value.trim();
+        const fab  = document.getElementById('novoFabricante').value;
+        if (!nome) { mostrarErro('Informe o nome do novo produto.'); return; }
+        if (!fab)  { mostrarErro('Selecione o fabricante.'); return; }
+        document.getElementById('fs-produtoId').value          = '';
+        document.getElementById('fs-novoNome').value           = nome;
+        document.getElementById('fs-novoNomeFantasia').value   = document.getElementById('novoNomeFantasia').value.trim();
+        document.getElementById('fs-novoFabricanteId').value   = fab;
+        document.getElementById('fs-novoDataFabricacao').value = document.getElementById('novoDataFabricacao').value;
+        document.getElementById('fs-novoDataVencimento').value = document.getElementById('novoDataVencimento').value;
+        document.getElementById('fs-novoPeso').value           = document.getElementById('novoPeso').value || '0';
+        document.getElementById('fs-novoRecomendacoes').value  = document.getElementById('novoRecomendacoes').value.trim();
+    }
+
+    document.getElementById('fs-unidadeId').value        = unidadeId;
+    document.getElementById('fs-porcao').value           = document.getElementById('porcao').value;
+    document.getElementById('fs-totalPorcoes').value     = document.getElementById('totalPorcoes').value;
+    document.getElementById('fs-totalColheres').value    = 0;
     document.getElementById('fs-ingredientesJson').value = JSON.stringify(ingredientes);
 
     document.getElementById('form-salvar').submit();
@@ -465,11 +1079,11 @@ function mostrarErro(msg) {
     el.textContent = msg;
     el.style.display = 'block';
 }
+
 function esconderErro() {
     document.getElementById('msg-erro').style.display = 'none';
 }
 
-// Inicia com 1 ingrediente vazio
 adicionarIngrediente();
 </script>
 </body>

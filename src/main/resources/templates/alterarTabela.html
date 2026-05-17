@@ -26,7 +26,7 @@
 
             <label>Produto</label>
 
-            <select name="produto.proCodigo"
+            <select name="produtoId"
                     class="form-control"
                     required>
 
@@ -42,7 +42,7 @@
 
         <div class="mb-3">
 
-            <label>Valor Energético</label>
+            <label>Valor Energético (kcal/100g)</label>
 
             <input type="number"
                    step="0.01"
@@ -50,6 +50,18 @@
                    class="form-control"
                    th:value="${tabela.tabValorEnergetico}"
                    required>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label>Valor Energético por Porção (kcal)</label>
+
+            <input type="number"
+                   step="0.01"
+                   name="tabValorEnergeticoPorcao"
+                   class="form-control"
+                   th:value="${tabela.tabValorEnergeticoPorcao}">
 
         </div>
 
@@ -68,9 +80,22 @@
 
         <div class="mb-3">
 
+            <label>Total de Porções na Embalagem</label>
+
+            <input type="number"
+                   name="tabTotalPorcao"
+                   class="form-control"
+                   min="1"
+                   max="9999"
+                   th:value="${tabela.tabTotalPorcao}">
+
+        </div>
+
+        <div class="mb-3">
+
             <label>Unidade de Medida</label>
 
-            <select name="unidadeMedida.undCodigo"
+            <select name="unidadeId"
                     class="form-control"
                     required>
 
@@ -81,6 +106,18 @@
                 </option>
 
             </select>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label>%VD da Energia</label>
+
+            <input type="number"
+                   step="0.01"
+                   name="tabVD"
+                   class="form-control"
+                   th:value="${tabela.tabVD}">
 
         </div>
 

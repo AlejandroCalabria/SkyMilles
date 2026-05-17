@@ -11,57 +11,115 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/responsive.css}">
     <style>
+    /* ══ RÓTULO ANVISA ══ */
+    .rotulo-wrapper { overflow-x: auto; }
+
     .rotulo-anvisa {
-        width: 420px;
-        border: 3px solid #000;
+        display: inline-block;
+        width: auto;
+        min-width: 300px;
+        max-width: 100%;
+        border: 2px solid #000;
         background: #fff;
         color: #000;
         font-family: Arial, Helvetica, sans-serif;
-        font-size: 13px;
+        font-size: 11px;
+        font-weight: normal;
+        line-height: 1.35;
+        box-sizing: border-box;
     }
+
     .rotulo-anvisa .r-titulo {
-        font-size: 22px; font-weight: 900;
-        padding: 4px 8px 3px 8px;
-        border-bottom: 8px solid #000; line-height: 1.1;
+        font-size: 16px;
+        font-weight: 900;
+        padding: 4px 10px 3px;
+        border-bottom: 3px solid #000;
+        text-align: center;
     }
+
     .rotulo-anvisa .r-porcao-bloco {
-        padding: 4px 8px; border-bottom: 1px solid #000;
-        font-size: 12px; overflow: hidden;
-    }
-    .rotulo-anvisa .r-porcao-valor { font-size: 17px; font-weight: 900; }
-    .rotulo-anvisa .r-total-porcoes { font-size: 11px; float: right; }
-    .rotulo-anvisa .r-colheres { font-size: 11px; clear: both; }
-    .rotulo-anvisa .r-divisor-grosso { border-top: 8px solid #000; }
-    .rotulo-anvisa .r-divisor-medio  { border-top: 4px solid #000; }
-    .rotulo-anvisa .r-header-colunas {
-        display: flex; justify-content: flex-end;
-        gap: 24px; padding: 2px 8px;
-        font-size: 10px; font-weight: 700;
+        padding: 3px 10px 4px;
         border-bottom: 1px solid #000;
+        font-size: 11px;
+        line-height: 1.4;
     }
-    .rotulo-anvisa .r-energia-bloco {
-        display: flex; justify-content: space-between;
-        align-items: baseline; padding: 3px 8px; gap: 8px;
+    .rotulo-anvisa .r-porcao-linha1 {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 6px;
     }
-    .rotulo-anvisa .r-energia-label { font-size: 13px; font-weight: 700; flex: 1; }
-    .rotulo-anvisa .r-energia-valor { font-size: 19px; font-weight: 900; }
-    .rotulo-anvisa .r-energia-vd { font-size: 11px; min-width: 44px; text-align: right; }
-    .rotulo-anvisa .r-nutriente {
-        display: flex; justify-content: space-between;
-        align-items: center; padding: 2px 8px;
-        border-bottom: 1px solid #000; font-size: 12px; gap: 4px;
+    .rotulo-anvisa .r-porcao-valor   { font-size: 13px; font-weight: 900; }
+    .rotulo-anvisa .r-total-porcoes  { font-size: 10.5px; white-space: nowrap; }
+    .rotulo-anvisa .r-medida-caseira { font-size: 10px; color: #333; margin-top: 1px; }
+
+    .rotulo-anvisa .r-divisor-grosso { border-top: 4px solid #000; }
+    .rotulo-anvisa .r-divisor-medio  { border-top: 2px solid #000; }
+
+    .r-grid {
+        display: grid;
+        grid-template-columns: auto 62px 70px 38px;
+        gap: 0 6px;
+        padding: 0 10px;
+        align-items: center;
     }
-    .rotulo-anvisa .r-nutriente .r-nome  { flex: 1; }
-    .rotulo-anvisa .r-nutriente .r-valor { min-width: 60px; text-align: right; font-weight: 700; }
-    .rotulo-anvisa .r-nutriente .r-vd   { min-width: 44px; text-align: right; }
+
+    .rotulo-anvisa .r-header {
+        font-size: 12px;
+        font-weight: bold;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        border-bottom: 2px solid #000;
+    }
+    .rotulo-anvisa .r-header span             { text-align: right; display: block; }
+    .rotulo-anvisa .r-header span:first-child { text-align: left; }
+
+    .rotulo-anvisa .r-energia {
+        border-bottom: 1px solid #000;
+        padding-top: 3px;
+        padding-bottom: 3px;
+    }
+    .rotulo-anvisa .r-energia .rn {
+        font-size: 11px;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+    .rotulo-anvisa .r-energia .rv {
+        text-align: right;
+        font-size: 11px;
+        white-space: nowrap;
+        line-height: 1.3;
+    }
+    .rotulo-anvisa .r-energia .rv .kj { display: block; font-size: 9px; color: #444; }
+    .rotulo-anvisa .r-energia .rvd    { text-align: right; font-size: 11px; font-weight: bold; }
+
+    .rotulo-anvisa .r-nut {
+        border-bottom: 1px solid #000;
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+    .rotulo-anvisa .r-nut .rn  { font-size: 11px; font-weight: bold; white-space: nowrap; }
+    .rotulo-anvisa .r-nut .rv  { text-align: right; font-size: 11px; white-space: nowrap; }
+    .rotulo-anvisa .r-nut .rvd { text-align: right; font-size: 11px; font-weight: bold; white-space: nowrap; }
+
+    .rotulo-anvisa .r-sub .rn {
+        padding-left: 16px;
+        font-weight: normal;
+        font-size: 10.5px;
+    }
+
+    .rotulo-anvisa .r-trans-vd { text-align: right; font-size: 8.5px; line-height: 1.2; }
+
     .rotulo-anvisa .r-rodape {
-        padding: 4px 8px; font-size: 9px;
-        line-height: 1.4; border-top: 4px solid #000;
+        padding: 3px 10px 4px;
+        font-size: 8.5px;
+        line-height: 1.5;
+        border-top: 2px solid #000;
     }
+
     .r-vazio {
-        padding: 8px; font-size: 11px; color: #888;
-        font-style: italic; text-align: center;
-        border-bottom: 1px solid #000;
+        padding: 8px 10px; font-size: 11px; color: #888;
+        font-style: italic; border-bottom: 1px solid #000;
     }
 </style>
 </head>
@@ -87,9 +145,14 @@
                     <br>
 
                     <div class="mb-3">
-                        <a th:href="@{/tabela/inserir}" class="btn btn-success btn-sm">Inserir Nova Tabela</a>
-                        <a th:href="@{/tabela/alterar}" class="btn btn-warning btn-sm">Alterar Tabelas</a>
-                        <a th:href="@{/tabela/remover}" class="btn btn-danger btn-sm">Remover Tabelas</a>
+                        <!--
+                            CORREÇÃO S3: links de ação apontavam para rotas inexistentes.
+                            /tabela/alterar e /tabela/remover não existem sem {id}.
+                            Removidos; o usuário acessa alterar/remover a partir da linha da tabela.
+                        -->
+                        <a th:href="@{/tabela/inserir}" class="btn btn-success btn-sm">
+                            <i class="fa fa-plus"></i> Nova Tabela
+                        </a>
                     </div>
 
                     <table class="table table-striped table-bordered">
@@ -99,7 +162,12 @@
                             <th>Produto</th>
                             <th>Porção</th>
                             <th>Unidade</th>
-                            <th>Valor Energético</th>
+                            <!--
+                                CORREÇÃO I1: era "Valor Energético" mas o campo
+                                tabValorEnergeticoPorcao é o valor POR PORÇÃO.
+                                Nomeado corretamente.
+                            -->
+                            <th>Energia/Porção</th>
                             <th>Ações</th>
                         </tr>
                         </thead>
@@ -110,7 +178,13 @@
     <tr>
         <td th:text="${stat.count}"></td>
         <td th:text="${t.produto != null ? t.produto.proNome : '—'}"></td>
-        <td th:text="${t.tabPorcao}"></td>
+
+        <!--
+            CORREÇÃO I1: porção formatada como inteiro se for número inteiro,
+            ou com 1 decimal se necessário. Usamos formatDecimal mas com 0 casas
+            para o caso mais comum (porções inteiras como 15, 60, 100).
+        -->
+        <td th:text="${t.tabPorcao != null ? #numbers.formatDecimal(t.tabPorcao, 1, 1) : '—'}"></td>
 
         <td>
             <span th:if="${t.unidadeMedida != null}"
@@ -121,71 +195,213 @@
             </span>
         </td>
 
+        <!--
+            CORREÇÃO I1: energia deve ser exibida como INTEIRO (IN 75/2020).
+            Era: #numbers.formatDecimal(t.tabValorEnergeticoPorcao, 1, 1) → "190.7 kcal"
+            Agora: inteiro arredondado → "191 kcal"
+        -->
         <td>
-            <span th:text="${t.tabValorEnergeticoPorcao}"></span> kcal
+            <span th:text="${#numbers.formatInteger(T(java.lang.Math).round(t.tabValorEnergeticoPorcao != null ? t.tabValorEnergeticoPorcao : 0), 1)}"></span> kcal
         </td>
 
         <td>
+            <!-- Visualizar rótulo -->
             <button class="btn btn-primary btn-sm"
                     type="button"
                     th:onclick="|document.getElementById('rotulo-' + ${t.tabCodigo}).classList.toggle('show')|">
-                Visualizar Rótulo
+                Rótulo
             </button>
+            <!-- Alterar -->
+            <a th:href="@{/tabela/alterar/{id}(id=${t.tabCodigo})}"
+               class="btn btn-warning btn-sm">Alterar</a>
+            <!-- Remover -->
+            <a th:href="@{/tabela/remover/{id}(id=${t.tabCodigo})}"
+               class="btn btn-danger btn-sm">Remover</a>
+            <!-- Visualizar página completa -->
+            <a th:href="@{/tabela/visualizar/{id}(id=${t.tabCodigo})}"
+               class="btn btn-secondary btn-sm">Detalhes</a>
         </td>
     </tr>
 
-    <!-- Linha do rótulo, logo abaixo da linha acima -->
+    <!-- Linha do rótulo expandível -->
     <tr>
         <td colspan="6" class="p-0 border-0">
             <div class="collapse" th:id="|rotulo-${t.tabCodigo}|">
                 <div class="p-3 bg-light">
+                    <div class="rotulo-wrapper">
                     <div class="rotulo-anvisa">
 
                         <div class="r-titulo">Informação Nutricional</div>
 
+                        <!-- Porção -->
                         <div class="r-porcao-bloco">
-                            <span class="r-total-porcoes">
-                                Porções por embalagem:
-                                <strong th:text="${t.tabTotalPorcao}">—</strong>
-                            </span>
-                            Porção de
-                            <span class="r-porcao-valor" th:text="${t.tabPorcao}">—</span>
-                            <span th:if="${t.unidadeMedida != null}"
-                                  th:text="${t.unidadeMedida.undNome}"></span>
-                            <span th:if="${t.unidadeMedida == null}">unid.</span>
-                            <div class="r-colheres"
-                                 th:if="${t.tabTotalColheres != null and t.tabTotalColheres != 0}">
-                                (<span th:text="${t.tabTotalColheres}"></span> colher(es)/copo(s))
+                            <div class="r-porcao-linha1">
+                                <span>Porção de
+                                    <span class="r-porcao-valor"
+                                          th:text="${t.tabPorcao != null ? #numbers.formatDecimal(t.tabPorcao, 1, 1) : '—'}">—</span>
+                                    <span th:if="${t.unidadeMedida != null}" th:text="${t.unidadeMedida.undNome}"></span>
+                                    <span th:if="${t.unidadeMedida == null}">g</span>
+                                </span>
+                                <span class="r-total-porcoes">
+                                    Porções por embalagem:
+                                    <strong th:text="${t.tabTotalPorcao != null ? #numbers.formatInteger(t.tabTotalPorcao.intValue(), 1) : '—'}">—</strong>
+                                </span>
+                            </div>
+                            <div class="r-medida-caseira"
+                                 th:if="${t.tabTotalColheres != null and t.tabTotalColheres > 0}"
+                                 th:text="${#numbers.formatDecimal(t.tabTotalColheres, 1, 1)} + ' colher(es)/copo(s)'">
                             </div>
                         </div>
 
                         <div class="r-divisor-grosso"></div>
 
-                        <div class="r-header-colunas">
-                            <span>Quantidade por porção</span>
+                        <!-- Cabeçalho das colunas -->
+                        <div class="r-grid r-header">
+                            <span></span>
+                            <span>100 g</span>
+                            <span th:text="${#numbers.formatDecimal(t.tabPorcao != null ? t.tabPorcao : 0, 1, 1)} + ' ' + (${t.unidadeMedida != null} ? ${t.unidadeMedida.undNome} : 'g')">Por porção</span>
                             <span>%VD*</span>
                         </div>
 
-                        <div class="r-energia-bloco">
-                            <span class="r-energia-label">Valor Energético</span>
-                            <span class="r-energia-valor">
-                                <span th:text="${t.tabValorEnergeticoPorcao}">—</span> kcal
+                        <!--
+                            CORREÇÃO C2 + I1: energia deve ser INTEIRO.
+                            Conversão kcal → kJ com Math.round para inteiro.
+                            Era: formatDecimal(x * 4.184, 1, 1) → "502.1 kJ"
+                            Agora: Math.round(x * 4.184) → "502 kJ"
+
+                            CORREÇÃO C3: %VD da energia deve ser INTEIRO.
+                            Era: formatDecimal(tabVD, 1, 1) + "%" → "7.3%"
+                            Agora: formatInteger(Math.round(tabVD)) + "%" → "7%"
+                            Condição: null → "**" (não mais "> 0" que escondia zeros válidos)
+                        -->
+                        <div class="r-grid r-energia">
+                            <span class="rn">Valor Energético (kcal/kJ)</span>
+                            <span class="rv">
+                                <span th:text="${#numbers.formatInteger(T(java.lang.Math).round(t.tabValorEnergetico != null ? t.tabValorEnergetico : 0), 1)}">—</span> kcal
+                                <span class="kj">
+                                    <span th:text="${#numbers.formatInteger(T(java.lang.Math).round((t.tabValorEnergetico != null ? t.tabValorEnergetico : 0) * 4.184), 1)}">—</span> kJ
+                                </span>
                             </span>
-                            <span class="r-energia-vd">
-                                <strong th:text="${t.tabVD != null and t.tabVD > 0 ? t.tabVD + '%' : '**'}">**</strong>
+                            <span class="rv">
+                                <span th:text="${#numbers.formatInteger(T(java.lang.Math).round(t.tabValorEnergeticoPorcao != null ? t.tabValorEnergeticoPorcao : 0), 1)}">—</span> kcal
+                                <span class="kj">
+                                    <span th:text="${#numbers.formatInteger(T(java.lang.Math).round((t.tabValorEnergeticoPorcao != null ? t.tabValorEnergeticoPorcao : 0) * 4.184), 1)}">—</span> kJ
+                                </span>
                             </span>
+                            <!-- C3: VD% inteiro, null → ** -->
+                            <span class="rvd"
+                                  th:text="${t.tabVD != null} ? ${#numbers.formatInteger(T(java.lang.Math).round(t.tabVD), 1)} + '%' : '**'">**</span>
                         </div>
 
                         <div class="r-divisor-medio"></div>
 
-                        <div th:each="tne : ${t.tneElementos}" class="r-nutriente">
-                            <span class="r-nome">
-                                <strong th:text="${tne.elemento.eleNome}">Nutriente</strong>
-                            </span>
-                            <span class="r-valor" th:text="${tne.tneValor}">0</span>
-                            <span class="r-vd"
-                                  th:text="${tne.tneVD > 0 ? tne.tneVD + '%' : '**'}">**</span>
+                        <!--
+                            CORREÇÃO C1: %VD deve ser inteiro (IN 75/2020).
+                            Era: formatDecimal(tne.tneVD, 1, 1) + "%" → "9.8%"
+                            Agora: formatInteger(Math.round(tne.tneVD)) + "%" → "10%"
+
+                            CORREÇÃO I3: sódio (mg) também arredondado como inteiro.
+                            O template detecta eleCodigo==16 e usa formatInteger.
+                        -->
+
+                        <!-- Carboidratos (eleCodigo=1) -->
+                        <th:block th:each="tne : ${t.tneElementos}" th:if="${tne.elemento.eleCodigo == 1}">
+                            <div class="r-grid r-nut">
+                                <span class="rn">Carboidratos (g)</span>
+                                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValorPadrao, 1, 1)}">—</span>
+                                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValor, 1, 1)}">—</span>
+                                <span class="rvd"
+                                      th:text="${tne.tneVD > 0} ? ${#numbers.formatInteger(T(java.lang.Math).round(tne.tneVD), 1)} + '%' : '**'">**</span>
+                            </div>
+                        </th:block>
+
+                        <!-- Açúcares Totais (eleCodigo=2) — %VD sempre ** por ANVISA -->
+                        <th:block th:each="tne : ${t.tneElementos}" th:if="${tne.elemento.eleCodigo == 2}">
+                            <div class="r-grid r-nut r-sub">
+                                <span class="rn">Açúcares Totais (g)</span>
+                                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValorPadrao, 1, 1)}">—</span>
+                                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValor, 1, 1)}">—</span>
+                                <span class="rvd">**</span>
+                            </div>
+                        </th:block>
+
+                        <!-- Açúcares Adicionados — N.D. fixo -->
+                        <div class="r-grid r-nut r-sub">
+                            <span class="rn">Açúcares Adicionados (g)</span>
+                            <span class="rv">N.D.</span>
+                            <span class="rv">N.D.</span>
+                            <span class="rvd">**</span>
                         </div>
+
+                        <!-- Proteínas (eleCodigo=4) -->
+                        <th:block th:each="tne : ${t.tneElementos}" th:if="${tne.elemento.eleCodigo == 4}">
+                            <div class="r-grid r-nut">
+                                <span class="rn">Proteínas (g)</span>
+                                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValorPadrao, 1, 1)}">—</span>
+                                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValor, 1, 1)}">—</span>
+                                <span class="rvd"
+                                      th:text="${tne.tneVD > 0} ? ${#numbers.formatInteger(T(java.lang.Math).round(tne.tneVD), 1)} + '%' : '**'">**</span>
+                            </div>
+                        </th:block>
+
+                        <!-- Gorduras Totais (eleCodigo=5) -->
+                        <th:block th:each="tne : ${t.tneElementos}" th:if="${tne.elemento.eleCodigo == 5}">
+                            <div class="r-grid r-nut">
+                                <span class="rn">Gorduras Totais (g)</span>
+                                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValorPadrao, 1, 1)}">—</span>
+                                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValor, 1, 1)}">—</span>
+                                <span class="rvd"
+                                      th:text="${tne.tneVD > 0} ? ${#numbers.formatInteger(T(java.lang.Math).round(tne.tneVD), 1)} + '%' : '**'">**</span>
+                            </div>
+                        </th:block>
+
+                        <!-- Gorduras Saturadas (eleCodigo=6) -->
+                        <th:block th:each="tne : ${t.tneElementos}" th:if="${tne.elemento.eleCodigo == 6}">
+                            <div class="r-grid r-nut r-sub">
+                                <span class="rn">Gorduras Saturadas (g)</span>
+                                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValorPadrao, 1, 1)}">—</span>
+                                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValor, 1, 1)}">—</span>
+                                <span class="rvd"
+                                      th:text="${tne.tneVD > 0} ? ${#numbers.formatInteger(T(java.lang.Math).round(tne.tneVD), 1)} + '%' : '**'">**</span>
+                            </div>
+                        </th:block>
+
+                        <!-- Gorduras Trans — 0 / VD não estabelecido (fixo por ausência de dado TBCA) -->
+                        <div class="r-grid r-nut r-sub">
+                            <span class="rn">Gorduras Trans (g)</span>
+                            <span class="rv">0</span>
+                            <span class="rv">0</span>
+                            <span class="r-trans-vd">VD não<br>estabel.</span>
+                        </div>
+
+                        <!-- Fibra Alimentar (eleCodigo=15) -->
+                        <th:block th:each="tne : ${t.tneElementos}" th:if="${tne.elemento.eleCodigo == 15}">
+                            <div class="r-grid r-nut">
+                                <span class="rn">Fibra Alimentar (g)</span>
+                                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValorPadrao, 1, 1)}">—</span>
+                                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValor, 1, 1)}">—</span>
+                                <span class="rvd"
+                                      th:text="${tne.tneVD > 0} ? ${#numbers.formatInteger(T(java.lang.Math).round(tne.tneVD), 1)} + '%' : '**'">**</span>
+                            </div>
+                        </th:block>
+
+                        <!--
+                            CORREÇÃO I3: Sódio em mg → exibir como INTEIRO (não decimal).
+                            Era: formatDecimal(tne.tneValorPadrao, 1, 1) → "345.7"
+                            Agora: formatInteger(Math.round(...)) → "346"
+                        -->
+                        <!-- Sódio (eleCodigo=16) -->
+                        <th:block th:each="tne : ${t.tneElementos}" th:if="${tne.elemento.eleCodigo == 16}">
+                            <div class="r-grid r-nut">
+                                <span class="rn">Sódio (mg)</span>
+                                <span class="rv"
+                                      th:text="${#numbers.formatInteger(T(java.lang.Math).round(tne.tneValorPadrao), 1)}">—</span>
+                                <span class="rv"
+                                      th:text="${#numbers.formatInteger(T(java.lang.Math).round(tne.tneValor), 1)}">—</span>
+                                <span class="rvd"
+                                      th:text="${tne.tneVD > 0} ? ${#numbers.formatInteger(T(java.lang.Math).round(tne.tneVD), 1)} + '%' : '**'">**</span>
+                            </div>
+                        </th:block>
 
                         <div th:if="${t.tneElementos == null or t.tneElementos.isEmpty()}"
                              class="r-vazio">
@@ -195,9 +411,23 @@
                         <div class="r-rodape">
                             * Percentual de Valores Diários fornecidos pela porção.<br>
                             ** VD não estabelecido.<br>
+                            N.D. Não disponível na base de dados utilizada (TBCA).<br>
                             Valores Diários de referência com base em uma dieta de 2000 kcal ou 8400 kJ.
                         </div>
 
+                    </div><!-- .rotulo-anvisa -->
+                    </div><!-- .rotulo-wrapper -->
+
+                    <!-- Ações rápidas abaixo do rótulo expandido -->
+                    <div class="mt-2 d-flex gap-2">
+                        <a th:href="@{/tabela/visualizar/{id}(id=${t.tabCodigo})}"
+                           class="btn btn-secondary btn-sm">Ver Página Completa</a>
+                        <a th:href="@{/tabela/gerar-pdf/{id}(id=${t.tabCodigo})}"
+                           class="btn btn-outline-primary btn-sm" target="_blank">Gerar PDF</a>
+                        <a th:href="@{/tabela/alterar/{id}(id=${t.tabCodigo})}"
+                           class="btn btn-warning btn-sm">Alterar</a>
+                        <a th:href="@{/tabela/remover/{id}(id=${t.tabCodigo})}"
+                           class="btn btn-danger btn-sm">Remover</a>
                     </div>
                 </div>
             </div>
@@ -219,10 +449,7 @@
 <script th:src="@{/js/jquery.min.js}"></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script>
-    /* Remove o loader quando a página terminar de carregar */
-    $(window).on('load', function () {
-        $('.loader_bg').fadeOut('slow');
-    });
+    $(window).on('load', function () { $('.loader_bg').fadeOut('slow'); });
 </script>
 
 </body>

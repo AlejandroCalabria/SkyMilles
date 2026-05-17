@@ -90,6 +90,9 @@ public class TabelaNutricionalController {
     @PostMapping("/salvar")
     public String salvar(
 
+            @RequestParam(required = false)
+            Long tabCodigo,
+
             @RequestParam Long produtoId,
 
             @RequestParam Long unidadeId,
@@ -113,8 +116,10 @@ public class TabelaNutricionalController {
             Double tabVD
     ) {
 
-        TabelaNutricional t =
-                new TabelaNutricional();
+        // Se tabCodigo presente → atualizar; senão → criar novo
+        TabelaNutricional t = (tabCodigo != null)
+                ? tabelaService.buscarPorId(tabCodigo)
+                : new TabelaNutricional();
 
         t.setProduto(
                 produtoService.buscarPorId(produtoId)

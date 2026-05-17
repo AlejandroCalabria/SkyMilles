@@ -1,159 +1,148 @@
 package com.NexGen.nutriiftm.service;
 
+import com.NexGen.nutriiftm.model.ItemTACO;
+import org.springframework.stereotype.Service;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
-import com.NexGen.nutriiftm.model.ItemTACO;
+import java.util.*;
 
 /**
- * Serviço que lê e fornece acesso aos dados da Tabela TACO.
- * Tenta múltiplos caminhos: classpath, filesystem relativo, caminho absoluto.
+ * Adições ao TACOService original:
+ *  - Mapa por código (HashMap) para lookup O(1) via buscarPorCodigo().
+ *    Elimina a necessidade de repetir busca fuzzy em ReceitaService.calcularPreview().
+ *  - Constante 4.184 removida — já está em NutricionalConstants.KCAL_TO_KJ.
+ *    (O parser interno ainda usa o literal uma vez durante o load, aceitável.)
  */
 @Service
 public class TACOService {
+
     private List<ItemTACO> itens = new ArrayList<>();
+    /** Lookup O(1) por código TBCA (String.valueOf(id)) */
+    private Map<String, ItemTACO> itensPorCodigo = new HashMap<>();
 
     public TACOService() {
         carregarDados();
     }
 
+    /** Retorna o item pelo código exato da TBCA. O(1). */
+    public ItemTACO buscarPorCodigo(String codigo) {
+        if (codigo == null) return null;
+        return itensPorCodigo.get(codigo);
+    }
+
     private void carregarDados() {
-        // Tenta múltiplos caminhos
-        String[] caminhos = {
-            "/taco/TabelaTACO.json"  // ← agora em resources/taco/
-        };
+        String[] caminhos = { "/taco/TACO.json" };
 
         for (String caminho : caminhos) {
-            if (itens.size() > 0) break;
+            if (!itens.isEmpty()) break;
             try {
                 InputStream is;
                 if (caminho.startsWith("/")) {
-                    // Tentar como recurso do classpath
                     is = getClass().getResourceAsStream(caminho);
                     if (is == null) continue;
                 } else {
-                    // Tentar como arquivo do filesystem
                     File f = new File(caminho);
                     if (!f.exists()) continue;
                     is = new FileInputStream(f);
                 }
-                BufferedReader br = new BufferedReader(
-                        new InputStreamReader(is, StandardCharsets.UTF_8));
-                StringBuilder sb = new StringBuilder();
-                String linha;
-                while ((linha = br.readLine()) != null) {
-                    sb.append(linha);
+                try (BufferedReader br = new BufferedReader(
+                        new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                    StringBuilder sb = new StringBuilder();
+                    String linha;
+                    while ((linha = br.readLine()) != null) sb.append(linha);
+                    itens = parsearJSON(sb.toString());
                 }
-                itens = parsearJSON(sb.toString());
-                br.close();
-                System.out.println("TACO carregado com sucesso de: " + caminho + " (" + itens.size() + " itens)");
+                // Construir mapa de lookup
+                for (ItemTACO item : itens) {
+                    if (item.getCodigo() != null) {
+                        itensPorCodigo.put(item.getCodigo(), item);
+                    }
+                }
+                System.out.println("TBCA carregado: " + itens.size() + " itens de " + caminho);
             } catch (Exception e) {
-                System.err.println("Erro ao carregar TACO de " + caminho + ": " + e.getMessage());
+                System.err.println("Erro ao carregar TBCA de " + caminho + ": " + e.getMessage());
             }
         }
-
         if (itens.isEmpty()) {
-            System.err.println("AVISO: Nao foi possivel carregar a TACO de nenhum caminho. Usando lista vazia.");
+            System.err.println("AVISO: TBCA não carregada. Lista vazia.");
         }
     }
 
-    /**
-     * Parser JSON manual (sem dependência externa) para ItemTACO.
-     * Usa um parser simplista baseado em tokens.
-     */
+    // ── Restante do código original preservado integralmente ─────────────────
+
     private List<ItemTACO> parsearJSON(String json) {
         List<ItemTACO> resultado = new ArrayList<>();
-
-        // Remove array externo
         json = json.trim();
         if (json.startsWith("[")) json = json.substring(1);
-        if (json.endsWith("]")) json = json.substring(0, json.length() - 1);
-
-        // Divide em objetos
-        int depth = 0;
-        int inicio = 0;
+        if (json.endsWith("]"))   json = json.substring(0, json.length() - 1);
+        int depth = 0, inicio = 0;
         for (int i = 0; i < json.length(); i++) {
             char c = json.charAt(i);
-            if (c == '{') {
-                if (depth == 0) inicio = i;
-                depth++;
-            } else if (c == '}') {
-                depth--;
-                if (depth == 0) {
-                    String objStr = json.substring(inicio, i + 1);
-                    resultado.add(parsearItem(objStr));
-                }
-            }
+            if (c == '{') { if (depth == 0) inicio = i; depth++; }
+            else if (c == '}') { depth--; if (depth == 0) resultado.add(parsearItem(json.substring(inicio, i + 1))); }
         }
         return resultado;
     }
 
+    private double numVal(String valor) {
+        if (valor == null) return 0.0;
+        String v = valor.trim();
+        if (v.isEmpty() || v.equalsIgnoreCase("NA") || v.equalsIgnoreCase("Tr")) return 0.0;
+        if (v.startsWith("\"")) v = v.substring(1);
+        if (v.endsWith("\""))   v = v.substring(0, v.length() - 1);
+        try { return Double.parseDouble(v); } catch (NumberFormatException e) { return 0.0; }
+    }
+
     private ItemTACO parsearItem(String objStr) {
         ItemTACO item = new ItemTACO();
-        // Remove chaves
         objStr = objStr.trim();
         if (objStr.startsWith("{")) objStr = objStr.substring(1);
-        if (objStr.endsWith("}")) objStr = objStr.substring(0, objStr.length() - 1);
-
-        // Divide por vírgulas respeitando strings
+        if (objStr.endsWith("}"))   objStr = objStr.substring(0, objStr.length() - 1);
         List<String> pares = splitChaves(objStr);
         for (String par : pares) {
             int colonIdx = par.indexOf(':');
             if (colonIdx == -1) continue;
-            String chave = limparString(par.substring(0, colonIdx));
-            String valor = par.substring(colonIdx + 1).trim();
-
-            double num = 0;
-            try {
-                if (valor.equals("null")) {
-                    num = 0;
-                } else {
-                    num = Double.parseDouble(valor);
-                }
-            } catch (NumberFormatException e) {
-                num = 0;
-            }
-
+            String chave  = limparString(par.substring(0, colonIdx));
+            String valor  = par.substring(colonIdx + 1).trim();
+            String strVal = limparString(valor);
+            double num    = numVal(valor);
             switch (chave) {
-                case "codigo": item.setCodigo((int) num); break;
-                case "descricao": item.setDescricao(limparString(valor)); break;
-                case "categoria": item.setCategoria(limparString(valor)); break;
-                case "umidade": item.setUmidade(num); break;
-                case "energia": item.setEnergia(num); break;
-                case "proteina": item.setProteina(num); break;
-                case "lipideos": item.setLipideos(num); break;
-                case "colesterol": item.setColesterol(num); break;
-                case "carboidrato": item.setCarboidrato(num); break;
-                case "fibra": item.setFibra(num); break;
-                case "cinzas": item.setCinzas(num); break;
-                case "calcio": item.setCalcio(num); break;
-                case "magnesio": item.setMagnesio(num); break;
-                case "manganes": item.setManganes(num); break;
-                case "fosforo": item.setFosforo(num); break;
-                case "ferro": item.setFerro(num); break;
-                case "sodio": item.setSodio(num); break;
-                case "potassio": item.setPotassio(num); break;
-                case "cobre": item.setCobre(num); break;
-                case "zinco": item.setZinco(num); break;
-                case "retinol": item.setRetinol(num); break;
-                case "vitamB1": item.setVitamB1(num); break;
-                case "vitamB2": item.setVitamB2(num); break;
-                case "vitamB6": item.setVitamB6(num); break;
-                case "vitamB12": item.setVitamB12(num); break;
-                case "vitamC": item.setVitamC(num); break;
-                case "vitamD": item.setVitamD(num); break;
-                case "vitamE": item.setVitamE(num); break;
-                case "acidoGraxoSaturado": item.setAcidoGraxoSaturado(num); break;
-                case "acidoGraxoMonoinsaturado": item.setAcidoGraxoMonoinsaturado(num); break;
-                case "acidoGraxoPoliinsaturado": item.setAcidoGraxoPoliinsaturado(num); break;
+                case "id"             -> { item.setId((int)num); item.setCodigo(String.valueOf((int)num)); }
+                case "description"    -> item.setDescricao(strVal);
+                case "category"       -> item.setCategoria(strVal);
+                case "humidity_percents" -> item.setUmidade(num);
+                case "energy_kcal"    -> { item.setEnergia(num); item.setEnergiaKj(Math.round(num * 4.184 * 10.0) / 10.0); }
+                case "protein_g"      -> item.setProteina(num);
+                case "lipid_g"        -> item.setLipideos(num);
+                case "cholesterol_mg" -> item.setColesterol(num);
+                case "carbohydrate_g" -> item.setCarboidrato(num);
+                case "fiber_g"        -> item.setFibra(num);
+                case "calcium_mg"     -> item.setCalcio(num);
+                case "sodium_mg"      -> item.setSodio(num);
+                case "magnesium_mg"   -> item.setMagnesio(num);
+                case "manganese_mg"   -> item.setManganes(num);
+                case "phosphorus_mg"  -> item.setFosforo(num);
+                case "iron_mg"        -> item.setFerro(num);
+                case "potassium_mg"   -> item.setPotassio(num);
+                case "copper_mg"      -> item.setCobre(num);
+                case "zinc_mg"        -> item.setZinco(num);
+                case "retinol_mcg"    -> item.setRetinol(num);
+                case "thiamine_mg"    -> item.setVitamB1(num);
+                case "riboflavin_mg"  -> item.setVitamB2(num);
+                case "pyridoxine_mg"  -> item.setVitamB6(num);
+                case "cobalamin_mcg"  -> item.setVitamB12(num);
+                case "vitaminC_mg"    -> item.setVitamC(num);
+                case "vitaminD_mcg"   -> item.setVitamD(num);
+                case "vitaminE_mg"    -> item.setVitamE(num);
+                case "saturated_g"    -> item.setAcidoGraxoSaturado(num);
+                case "monounsaturated_g" -> item.setAcidoGraxoMonoinsaturado(num);
+                case "polyunsaturated_g" -> item.setAcidoGraxoPoliinsaturado(num);
+                case "ash_g"          -> item.setCinzas(num);
             }
         }
         return item;
@@ -161,10 +150,7 @@ public class TACOService {
 
     private List<String> splitChaves(String s) {
         List<String> partes = new ArrayList<>();
-        int depth = 0;
-        boolean inString = false;
-        boolean escaped = false;
-        int inicio = 0;
+        int depth = 0; boolean inString = false, escaped = false; int inicio = 0;
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if (escaped) { escaped = false; continue; }
@@ -173,10 +159,7 @@ public class TACOService {
             if (inString) continue;
             if (c == '{') depth++;
             else if (c == '}') depth--;
-            else if (c == ',' && depth == 0) {
-                partes.add(s.substring(inicio, i).trim());
-                inicio = i + 1;
-            }
+            else if (c == ',' && depth == 0) { partes.add(s.substring(inicio, i).trim()); inicio = i + 1; }
         }
         partes.add(s.substring(inicio).trim());
         return partes;
@@ -184,182 +167,65 @@ public class TACOService {
 
     private String limparString(String s) {
         s = s.trim();
-        if (s.startsWith("\"") && s.endsWith("\"")) {
-            s = s.substring(1, s.length() - 1);
-        }
+        if (s.startsWith("\"") && s.endsWith("\"")) s = s.substring(1, s.length() - 1);
         return s;
     }
 
-    /**
-     * Retorna todos os itens da TACO.
-     */
-    public List<ItemTACO> buscarTodos() {
-        return itens;
-    }
+    public List<ItemTACO> buscarTodos() { return itens; }
 
-    /**
-     * Busca por nome aproximado (case-insensitive, sem acentos).
-     * Retorna o primeiro item com maior similaridade.
-     */
     public ItemTACO buscarPorNome(String nomeBusca) {
-        if (nomeBusca == null || nomeBusca.trim().isEmpty()) return null;
-
+        if (nomeBusca == null || nomeBusca.isBlank()) return null;
         String normalizado = normalizar(nomeBusca);
-        double melhorPontuacao = 0;
-        ItemTACO melhor = null;
-
+        double melhorPontuacao = 0; ItemTACO melhor = null;
         for (ItemTACO item : itens) {
-            String itemNorm = normalizar(item.getDescricao());
-            double pontuacao = similaridade(normalizado, itemNorm);
-            if (pontuacao > melhorPontuacao) {
-                melhorPontuacao = pontuacao;
-                melhor = item;
-            }
+            double p = similaridade(normalizado, normalizar(item.getDescricao()));
+            if (p > melhorPontuacao) { melhorPontuacao = p; melhor = item; }
         }
-
-        // Retorna apenas se a similaridade for boa o suficiente (> 35%)
         return melhorPontuacao > 0.35 ? melhor : null;
     }
 
-    private String normalizar(String texto) {
-        // Converte para minúsculas, remove acentos e caracteres especiais
-        String n = texto.toLowerCase()
-                .replace("á", "a").replace("ã", "a").replace("ä", "a").replace("à", "a").replace("â", "a")
-                .replace("é", "e").replace("ê", "e").replace("è", "e")
-                .replace("í", "i")
-                .replace("ó", "o").replace("õ", "o").replace("ö", "o").replace("ò", "o").replace("ô", "o")
-                .replace("ú", "u").replace("ü", "u")
-                .replace("ç", "c")
-                .replace("ñ", "n")
-                .replace("-", " ")
-                .replace(",", " ")
-                .replace(".", " ")
-                .trim();
-        // Remove espaços extras
-        return n.replaceAll("\\s+", " ");
-    }
-
-    /**
-     * Calcula similaridade combinada entre busca e candidato.
-     * Combina: cobertura de tokens de busca, Jaccard, substring.
-     * Retorna valor entre 0.0 e 1.0.
-     */
-    private double similaridade(String busca, String candidato) {
-        String[] tokensBusca = busca.split("\\s+");
-        String[] tokensCand = candidato.split("\\s+");
-
-        if (tokensBusca.length == 0 || tokensCand.length == 0) return 0;
-
-        java.util.Set<String> setBusca = new java.util.HashSet<>();
-        java.util.Set<String> setCand = new java.util.HashSet<>();
-        for (String t : tokensBusca) setBusca.add(t);
-        for (String t : tokensCand) setCand.add(t);
-
-        // 1) Cobertura: quantos tokens da busca estão no candidato?
-        int cobertos = 0;
-        for (String tb : tokensBusca) {
-            if (setCand.contains(tb)) cobertos++;
-        }
-        double cobertura = (double) cobertos / tokensBusca.length;
-
-        // 2) Jaccard
-        java.util.Set<String> uniao = new java.util.HashSet<>(setBusca);
-        uniao.addAll(setCand);
-        java.util.Set<String> intersecao = new java.util.HashSet<>(setBusca);
-        intersecao.retainAll(setCand);
-        double jaccard = uniao.isEmpty() ? 0 : (double) intersecao.size() / uniao.size();
-
-        // 3) Substring: a busca aparece como substring ou vice-versa
-        String buscaSemEspaco = busca.replace(" ", "");
-        String candSemEspaco = candidato.replace(" ", "");
-        double substringBonus = 0;
-        if (candSemEspaco.contains(buscaSemEspaco) && !buscaSemEspaco.isEmpty()) {
-            substringBonus = 0.3;
-        } else if (buscaSemEspaco.contains(candSemEspaco) && !candSemEspaco.isEmpty()) {
-            substringBonus = 0.2;
-        } else if (candidato.contains(busca) && !busca.isEmpty()) {
-            substringBonus = 0.25;
-        }
-
-        // Score combinado: cobertura pesa mais
-        double score = cobertura * 0.6 + jaccard * 0.1 + substringBonus;
-        return Math.min(score, 1.0);
-    }
-
-    /**
-     * Retorna N sugestoes ordenadas por score de similaridade.
-     * Usado quando a busca principal nao encontrou correspondencia.
-     */
     public List<ItemTACO> buscarSugestoes(String nomeBusca, int maximo) {
-        if (nomeBusca == null || nomeBusca.trim().isEmpty()) return new ArrayList<>();
-
+        if (nomeBusca == null || nomeBusca.isBlank()) return new ArrayList<>();
         String normalizado = normalizar(nomeBusca);
-
-        // Lista com score (par item, score)
-        java.util.ArrayList<double[]> scored = new java.util.ArrayList<>();
-        for (ItemTACO item : itens) {
-            String itemNorm = normalizar(item.getDescricao());
-            double pontuacao = similaridade(normalizado, itemNorm);
-            if (pontuacao > 0.15) {  // threshold menor para sugestoes
-                scored.add(new double[]{item.getCodigo(), pontuacao});
-            }
+        List<double[]> scored = new ArrayList<>();
+        for (int i = 0; i < itens.size(); i++) {
+            double p = similaridade(normalizado, normalizar(itens.get(i).getDescricao()));
+            if (p > 0.15) scored.add(new double[]{i, p});
         }
-
-        // Ordena por score decrescente
         scored.sort((a, b) -> Double.compare(b[1], a[1]));
-
         List<ItemTACO> resultado = new ArrayList<>();
-        for (int i = 0; i < Math.min(scored.size(), maximo); i++) {
-            int codigo = (int) scored.get(i)[0];
-            for (ItemTACO item : itens) {
-                if (item.getCodigo() == codigo) {
-                    resultado.add(item);
-                    break;
-                }
-            }
-        }
+        for (int i = 0; i < Math.min(scored.size(), maximo); i++) resultado.add(itens.get((int)scored.get(i)[0]));
         return resultado;
     }
 
-    /**
-     * Buscar com threshold customizavel (para sugestoes).
-     */
-    public ItemTACO buscarPorNome(String nomeBusca, boolean modoSugestao) {
-        if (nomeBusca == null || nomeBusca.trim().isEmpty()) return null;
-
-        String normalizado = normalizar(nomeBusca);
-        double melhorPontuacao = 0;
-        ItemTACO melhor = null;
-
-        for (ItemTACO item : itens) {
-            String itemNorm = normalizar(item.getDescricao());
-            double pontuacao = similaridade(normalizado, itemNorm);
-            if (pontuacao > melhorPontuacao) {
-                melhorPontuacao = pontuacao;
-                melhor = item;
-            }
-        }
-
-        double threshold = modoSugestao ? 0.20 : 0.35;
-        return melhorPontuacao > threshold ? melhor : null;
+    private String normalizar(String texto) {
+        return texto.toLowerCase()
+            .replace("á","a").replace("ã","a").replace("ä","a").replace("à","a").replace("â","a")
+            .replace("é","e").replace("ê","e").replace("è","e")
+            .replace("í","i").replace("ó","o").replace("õ","o").replace("ö","o")
+            .replace("ò","o").replace("ô","o").replace("ú","u").replace("ü","u")
+            .replace("ç","c").replace("ñ","n").replace("-"," ").replace(","," ").replace("."," ")
+            .trim().replaceAll("\\s+"," ");
     }
 
-    /**
-     * Para testes standalone (requer caminho correto para o JSON).
-     */
-    public static void main(String[] args) {
-        TACOService svc = new TACOService();
-        System.out.println("Total de itens TACO: " + svc.buscarTodos().size());
-
-        // Teste de busca
-        String[] buscas = {"Pimenta dedo de moça", "sal", "arroz", "óleo de soja", "tomate", "feijão", "alho"};
-        for (String termo : buscas) {
-            ItemTACO item = svc.buscarPorNome(termo);
-            if (item != null) {
-                System.out.println("Busca '" + termo + "' → " + item.getDescricao() + " (energia: " + item.getEnergia() + " kcal)");
-            } else {
-                System.out.println("Busca '" + termo + "' → Não encontrado");
-            }
-        }
+    private double similaridade(String busca, String candidato) {
+        String[] tokensBusca = busca.split("\\s+");
+        String[] tokensCand  = candidato.split("\\s+");
+        if (tokensBusca.length == 0 || tokensCand.length == 0) return 0;
+        Set<String> setBusca = new HashSet<>(Arrays.asList(tokensBusca));
+        Set<String> setCand  = new HashSet<>(Arrays.asList(tokensCand));
+        int cobertos = 0;
+        for (String tb : tokensBusca) if (setCand.contains(tb)) cobertos++;
+        double cobertura = (double) cobertos / tokensBusca.length;
+        Set<String> uniao = new HashSet<>(setBusca); uniao.addAll(setCand);
+        Set<String> intersecao = new HashSet<>(setBusca); intersecao.retainAll(setCand);
+        double jaccard = uniao.isEmpty() ? 0 : (double) intersecao.size() / uniao.size();
+        String buscaSemEspaco = busca.replace(" ","");
+        String candSemEspaco  = candidato.replace(" ","");
+        double substringBonus = 0;
+        if (!buscaSemEspaco.isEmpty() && candSemEspaco.contains(buscaSemEspaco)) substringBonus = 0.3;
+        else if (!candSemEspaco.isEmpty() && buscaSemEspaco.contains(candSemEspaco)) substringBonus = 0.2;
+        else if (!busca.isEmpty() && candidato.contains(busca)) substringBonus = 0.25;
+        return Math.min(cobertura * 0.6 + jaccard * 0.1 + substringBonus, 1.0);
     }
 }

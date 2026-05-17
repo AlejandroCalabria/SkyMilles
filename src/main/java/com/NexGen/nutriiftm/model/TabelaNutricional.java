@@ -1,17 +1,11 @@
 package com.NexGen.nutriiftm.model;
 
 import jakarta.persistence.*;
-
 import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "tabelanutricional")
-
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -61,4 +55,12 @@ public class TabelaNutricional {
             fetch = FetchType.LAZY
     )
     private List<TabNutElemento> tneElementos;
+
+    /**
+     * Helper seguro — evita NPE quando tabPorcao for null.
+     * Usado por TabNutElemento.getTabPorcao().
+     */
+    public double getTabPorcao() {
+        return tabPorcao != null ? tabPorcao : 0.0;
+    }
 }

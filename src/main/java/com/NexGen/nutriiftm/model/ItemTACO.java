@@ -6,44 +6,54 @@ import lombok.Setter;
 import lombok.AllArgsConstructor;
 
 /**
- * Representa um item da Tabela TACO.
- * Lido do arquivo JSON — NÃO é uma tabela do banco.
- * 100g
+ * Representa um item da Tabela TACO (novo formato TACO.json).
+ * Lido do arquivo JSON — NÃO é uma entidade do banco.
+ * Valores por 100g. "NA", "Tr" e "" são tratados como 0.0 no parser.
  */
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class ItemTACO {
-    private int codigo;
-    private String descricao;
-    private String categoria;
-    private double umidade;
-    private double energia;
-    private double proteina;
-    private double lipideos;
-    private double colesterol;
-    private double carboidrato;
-    private double fibra;
-    private double cinzas;
-    private double calcio;
-    private double magnesio;
-    private double manganes;
-    private double fosforo;
-    private double ferro;
-    private double sodio;
-    private double potassio;
-    private double cobre;
-    private double zinco;
-    private double retinol;
-    private double vitamB1;
-    private double vitamB2;
-    private double vitamB6;
-    private double vitamB12;
-    private double vitamC;
-    private double vitamD;
-    private double vitamE;
-    private double acidoGraxoSaturado;
-    private double acidoGraxoMonoinsaturado;
-    private double acidoGraxoPoliinsaturado;
+
+    // ── Identificação ────────────────────────────────────────────────────────
+    private int    id;           // novo: era String codigo
+    private String codigo;       // mantido para compatibilidade (preenchido com String.valueOf(id))
+    private String descricao;    // ← getter getDescricao() preservado
+    private String categoria;    // ← getter getCategoria() preservado
+
+    // ── Macronutrientes (getters preservados) ────────────────────────────────
+    private double umidade;       // humidity_percents
+    private double energia;       // energy_kcal      ← getEnergia()
+    private double energiaKj;     // energy_kcal * 4.184 (calculado no parser)
+    private double proteina;      // protein_g        ← getProteina()
+    private double lipideos;      // lipid_g          ← getLipideos()
+    private double colesterol;    // cholesterol_mg
+    private double carboidrato;   // carbohydrate_g   ← getCarboidrato()
+    private double acucarTotal;   // (não existe no novo JSON → 0.0)
+    private double fibra;         // fiber_g          ← getFibra()
+    private double sodio;         // sodium_mg        ← getSodio()
+
+    // ── Micronutrientes ──────────────────────────────────────────────────────
+    private double calcio;        // calcium_mg
+    private double magnesio;      // magnesium_mg
+    private double manganes;      // manganese_mg
+    private double fosforo;       // phosphorus_mg
+    private double ferro;         // iron_mg
+    private double potassio;      // potassium_mg
+    private double cobre;         // copper_mg
+    private double zinco;         // zinc_mg
+
+    // ── Vitaminas ────────────────────────────────────────────────────────────
+    private double retinol;       // retinol_mcg
+    private double vitamB1;       // thiamine_mg
+    private double vitamB2;       // riboflavin_mg
+    private double vitamB6;       // pyridoxine_mg
+    private double vitamB12;      // cobalamin_mcg
+    private double vitamC;        // vitaminC_mg
+    private double vitamD;        // vitaminD_mcg (se existir)
+    private double vitamE;        // vitaminE_mg  (se existir)
+
+    // ── Ácidos graxos ────────────────────────────────────────────────────────
+    private double acidoGraxoSaturado;        // saturated_g   ← getAcidoGraxoSaturado()
+    private double acidoGraxoMonoinsaturado;  // monounsaturated_g
+    private double acidoGraxoPoliinsaturado;  // polyunsaturated_g
+    private double cinzas;                    // ash_g
 }

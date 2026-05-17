@@ -1,183 +1,234 @@
 <!DOCTYPE html>
-<html lang="pt-BR"
-      xmlns:th="http://www.thymeleaf.org">
-
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Visualizar Tabela Nutricional</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
-
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
-        body { background: #f8f9fa; }
-
+        .rotulo-wrapper { overflow-x: auto; }
         .rotulo-anvisa {
-            width: 420px;
-            border: 3px solid #000;
+            display: inline-block;
+            width: auto;
+            min-width: 300px;
+            max-width: 100%;
+            border: 2px solid #000;
             background: #fff;
             color: #000;
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 13px;
+            font-size: 11px;
+            font-weight: normal;
+            line-height: 1.35;
+            box-sizing: border-box;
         }
         .rotulo-anvisa .r-titulo {
-            font-size: 22px;
-            font-weight: 900;
-            padding: 4px 8px 3px 8px;
-            border-bottom: 8px solid #000;
-            line-height: 1.1;
+            font-size: 16px; font-weight: 900;
+            padding: 4px 10px 3px; border-bottom: 3px solid #000; text-align: center;
         }
         .rotulo-anvisa .r-porcao-bloco {
-            padding: 4px 8px;
-            border-bottom: 1px solid #000;
-            font-size: 12px;
-            overflow: hidden;
+            padding: 3px 10px 4px; border-bottom: 1px solid #000; font-size: 11px; line-height: 1.4;
         }
-        .rotulo-anvisa .r-porcao-valor {
-            font-size: 17px;
-            font-weight: 900;
+        .rotulo-anvisa .r-porcao-linha1 {
+            display: flex; justify-content: space-between; align-items: baseline; gap: 6px;
         }
-        .rotulo-anvisa .r-total-porcoes {
-            font-size: 11px;
-            float: right;
+        .rotulo-anvisa .r-porcao-valor  { font-size: 13px; font-weight: 900; }
+        .rotulo-anvisa .r-total-porcoes { font-size: 10.5px; white-space: nowrap; }
+        .rotulo-anvisa .r-medida-caseira { font-size: 10px; color: #333; margin-top: 1px; }
+        .rotulo-anvisa .r-divisor-grosso { border-top: 4px solid #000; }
+        .rotulo-anvisa .r-divisor-medio  { border-top: 2px solid #000; }
+        .r-grid {
+            display: grid;
+            grid-template-columns: auto 62px 70px 38px;
+            gap: 0 6px; padding: 0 10px; align-items: center;
         }
-        .rotulo-anvisa .r-colheres {
-            font-size: 11px;
-            clear: both;
+        .rotulo-anvisa .r-header {
+            font-size: 12px; font-weight: bold; padding-top: 3px; padding-bottom: 3px; border-bottom: 2px solid #000;
         }
-        .rotulo-anvisa .r-divisor-grosso { border-top: 8px solid #000; }
-        .rotulo-anvisa .r-divisor-medio  { border-top: 4px solid #000; }
-        .rotulo-anvisa .r-header-colunas {
-            display: flex;
-            justify-content: flex-end;
-            gap: 24px;
-            padding: 2px 8px;
-            font-size: 10px;
-            font-weight: 700;
-            border-bottom: 1px solid #000;
-        }
-        .rotulo-anvisa .r-energia-bloco {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            padding: 3px 8px;
-            gap: 8px;
-        }
-        .rotulo-anvisa .r-energia-label  { font-size: 13px; font-weight: 700; flex: 1; }
-        .rotulo-anvisa .r-energia-valor  { font-size: 19px; font-weight: 900; }
-        .rotulo-anvisa .r-energia-vd     { font-size: 11px; min-width: 44px; text-align: right; }
-        .rotulo-anvisa .r-nutriente {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 2px 8px;
-            border-bottom: 1px solid #000;
-            font-size: 12px;
-            gap: 4px;
-        }
-        .rotulo-anvisa .r-nutriente .r-nome  { flex: 1; }
-        .rotulo-anvisa .r-nutriente .r-valor { min-width: 60px; text-align: right; font-weight: 700; }
-        .rotulo-anvisa .r-nutriente .r-vd   { min-width: 44px; text-align: right; font-weight: 400; }
+        .rotulo-anvisa .r-header span             { text-align: right; display: block; }
+        .rotulo-anvisa .r-header span:first-child { text-align: left; }
+        .rotulo-anvisa .r-energia { border-bottom: 1px solid #000; padding-top: 3px; padding-bottom: 3px; }
+        .rotulo-anvisa .r-energia .rn  { font-size: 11px; font-weight: bold; white-space: nowrap; }
+        .rotulo-anvisa .r-energia .rv  { text-align: right; font-size: 11px; white-space: nowrap; line-height: 1.3; }
+        .rotulo-anvisa .r-energia .rv .kj { display: block; font-size: 9px; color: #444; }
+        .rotulo-anvisa .r-energia .rvd { text-align: right; font-size: 11px; font-weight: bold; }
+        .rotulo-anvisa .r-nut { border-bottom: 1px solid #000; padding-top: 2px; padding-bottom: 2px; }
+        .rotulo-anvisa .r-nut .rn  { font-size: 11px; font-weight: bold; white-space: nowrap; }
+        .rotulo-anvisa .r-nut .rv  { text-align: right; font-size: 11px; white-space: nowrap; }
+        .rotulo-anvisa .r-nut .rvd { text-align: right; font-size: 11px; font-weight: bold; white-space: nowrap; }
+        .rotulo-anvisa .r-sub .rn  { padding-left: 16px; font-weight: normal; font-size: 10.5px; }
+        .rotulo-anvisa .r-trans-vd { text-align: right; font-size: 8.5px; line-height: 1.2; }
         .rotulo-anvisa .r-rodape {
-            padding: 4px 8px;
-            font-size: 9px;
-            line-height: 1.4;
-            border-top: 4px solid #000;
+            padding: 3px 10px 4px; font-size: 8.5px; line-height: 1.5; border-top: 2px solid #000;
         }
-        .r-vazio {
-            padding: 8px;
-            font-size: 11px;
-            color: #888;
-            font-style: italic;
-            text-align: center;
-            border-bottom: 1px solid #000;
-        }
+        .r-vazio { padding: 8px 10px; font-size: 11px; color: #888; font-style: italic; border-bottom: 1px solid #000; }
     </style>
 </head>
+<body class="main-layout">
 
-<body class="container mt-4">
+<div th:replace="~{menu :: menu}"></div>
 
-<h2 class="mb-1">Rótulo Nutricional</h2>
-<p class="text-muted mb-4" th:text="${tabela.produto.proNome}"></p>
+<div class="three_box">
+<div class="container mt-4">
 
-<div class="rotulo-anvisa">
+    <h3 class="mb-1">Rótulo Nutricional
+        <small style="font-size:13px;color:#888;font-weight:normal;">RDC 429/2020 · IN 75/2020</small>
+    </h3>
+    <p class="text-muted mb-3" th:text="${tabela.produto.proNome}"></p>
 
-    <div class="r-titulo">Informação Nutricional</div>
+    <div class="rotulo-wrapper">
+    <div class="rotulo-anvisa">
 
-    <!-- Porção -->
-    <div class="r-porcao-bloco">
-        <span class="r-total-porcoes">
-            Porções por embalagem:
-            <strong th:text="${tabela.tabTotalPorcao}">—</strong>
-        </span>
+        <div class="r-titulo">Informação Nutricional</div>
 
-        Porção de
-        <span class="r-porcao-valor" th:text="${tabela.tabPorcao}">—</span>
-
-        <span th:if="${tabela.unidadeMedida != null}"
-              th:text="${tabela.unidadeMedida.undNome}"></span>
-        <span th:if="${tabela.unidadeMedida == null}">unid.</span>
-
-        <div class="r-colheres"
-             th:if="${tabela.tabTotalColheres != null and tabela.tabTotalColheres != 0}">
-            (<span th:text="${tabela.tabTotalColheres}"></span> colher(es)/copo(s))
+        <div class="r-porcao-bloco">
+            <div class="r-porcao-linha1">
+                <span>Porção de
+                    <span class="r-porcao-valor" th:text="${tabela.tabPorcao}">—</span>
+                    <span th:if="${tabela.unidadeMedida != null}" th:text="${tabela.unidadeMedida.undNome}"></span>
+                </span>
+                <span class="r-total-porcoes">
+                    Porções por embalagem: <strong th:text="${tabela.tabTotalPorcao}">—</strong>
+                </span>
+            </div>
+            <div class="r-medida-caseira"
+                 th:if="${tabela.tabTotalColheres != null and tabela.tabTotalColheres > 0}"
+                 th:text="${tabela.tabTotalColheres} + ' colher(es)/copo(s)'">
+            </div>
         </div>
+
+        <div class="r-divisor-grosso"></div>
+
+        <div class="r-grid r-header">
+            <span></span>
+            <span>100 g</span>
+            <span th:text="${tabela.tabPorcao} + ' ' + (${tabela.unidadeMedida != null} ? ${tabela.unidadeMedida.undNome} : 'g')">Por porção</span>
+            <span>%VD*</span>
+        </div>
+
+        <div class="r-grid r-energia">
+            <span class="rn">Valor Energético (kcal/kJ)</span>
+            <span class="rv">
+                <span th:text="${#numbers.formatInteger(T(java.lang.Math).round(tabela.tabValorEnergetico != null ? tabela.tabValorEnergetico : 0), 1)}">—</span> kcal
+                <span class="kj"><span th:text="${#numbers.formatInteger(T(java.lang.Math).round((tabela.tabValorEnergetico != null ? tabela.tabValorEnergetico : 0) * 4.184), 1)}">—</span> kJ</span>
+            </span>
+            <span class="rv">
+                <span th:text="${#numbers.formatInteger(T(java.lang.Math).round(tabela.tabValorEnergeticoPorcao != null ? tabela.tabValorEnergeticoPorcao : 0), 1)}">—</span> kcal
+                <span class="kj"><span th:text="${#numbers.formatInteger(T(java.lang.Math).round((tabela.tabValorEnergeticoPorcao != null ? tabela.tabValorEnergeticoPorcao : 0) * 4.184), 1)}">—</span> kJ</span>
+            </span>
+            <span class="rvd" th:text="${tabela.tabVD != null} ? ${#numbers.formatInteger(T(java.lang.Math).round(tabela.tabVD), 1)} + '%' : '**'">**</span>
+        </div>
+
+        <div class="r-divisor-medio"></div>
+
+        <!-- Carboidratos eleCodigo=1 -->
+        <th:block th:each="tne : ${elementos}" th:if="${tne.elemento.eleCodigo == 1}">
+            <div class="r-grid r-nut">
+                <span class="rn">Carboidratos (g)</span>
+                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValorPadrao, 1, 1)}">—</span>
+                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValor, 1, 1)}">—</span>
+                <span class="rvd" th:text="${tne.tneVD > 0} ? ${#numbers.formatInteger(T(java.lang.Math).round(tne.tneVD), 1)} + '%' : '**'">**</span>
+            </div>
+        </th:block>
+
+        <!-- Açúcares Totais eleCodigo=2 — %VD sempre ** (ANVISA) -->
+        <th:block th:each="tne : ${elementos}" th:if="${tne.elemento.eleCodigo == 2}">
+            <div class="r-grid r-nut r-sub">
+                <span class="rn">Açúcares Totais (g)</span>
+                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValorPadrao, 1, 1)}">—</span>
+                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValor, 1, 1)}">—</span>
+                <span class="rvd">**</span>
+            </div>
+        </th:block>
+
+        <!-- Açúcares Adicionados — N.D. / ** fixo -->
+        <div class="r-grid r-nut r-sub">
+            <span class="rn">Açúcares Adicionados (g)</span>
+            <span class="rv">N.D.</span>
+            <span class="rv">N.D.</span>
+            <span class="rvd">**</span>
+        </div>
+
+        <!-- Proteínas eleCodigo=4 -->
+        <th:block th:each="tne : ${elementos}" th:if="${tne.elemento.eleCodigo == 4}">
+            <div class="r-grid r-nut">
+                <span class="rn">Proteínas (g)</span>
+                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValorPadrao, 1, 1)}">—</span>
+                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValor, 1, 1)}">—</span>
+                <span class="rvd" th:text="${tne.tneVD > 0} ? ${#numbers.formatInteger(T(java.lang.Math).round(tne.tneVD), 1)} + '%' : '**'">**</span>
+            </div>
+        </th:block>
+
+        <!-- Gorduras Totais eleCodigo=5 -->
+        <th:block th:each="tne : ${elementos}" th:if="${tne.elemento.eleCodigo == 5}">
+            <div class="r-grid r-nut">
+                <span class="rn">Gorduras Totais (g)</span>
+                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValorPadrao, 1, 1)}">—</span>
+                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValor, 1, 1)}">—</span>
+                <span class="rvd" th:text="${tne.tneVD > 0} ? ${#numbers.formatInteger(T(java.lang.Math).round(tne.tneVD), 1)} + '%' : '**'">**</span>
+            </div>
+        </th:block>
+
+        <!-- Gorduras Saturadas eleCodigo=6 -->
+        <th:block th:each="tne : ${elementos}" th:if="${tne.elemento.eleCodigo == 6}">
+            <div class="r-grid r-nut r-sub">
+                <span class="rn">Gorduras Saturadas (g)</span>
+                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValorPadrao, 1, 1)}">—</span>
+                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValor, 1, 1)}">—</span>
+                <span class="rvd" th:text="${tne.tneVD > 0} ? ${#numbers.formatInteger(T(java.lang.Math).round(tne.tneVD), 1)} + '%' : '**'">**</span>
+            </div>
+        </th:block>
+
+        <!-- Gorduras Trans — 0 / VD não estabelecido fixo -->
+        <div class="r-grid r-nut r-sub">
+            <span class="rn">Gorduras Trans (g)</span>
+            <span class="rv">0</span>
+            <span class="rv">0</span>
+            <span class="r-trans-vd">VD não<br>estabel.</span>
+        </div>
+
+        <!-- Fibra Alimentar eleCodigo=15 -->
+        <th:block th:each="tne : ${elementos}" th:if="${tne.elemento.eleCodigo == 15}">
+            <div class="r-grid r-nut">
+                <span class="rn">Fibra Alimentar (g)</span>
+                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValorPadrao, 1, 1)}">—</span>
+                <span class="rv" th:text="${#numbers.formatDecimal(tne.tneValor, 1, 1)}">—</span>
+                <span class="rvd" th:text="${tne.tneVD > 0} ? ${#numbers.formatInteger(T(java.lang.Math).round(tne.tneVD), 1)} + '%' : '**'">**</span>
+            </div>
+        </th:block>
+
+        <!-- Sódio eleCodigo=16 -->
+        <th:block th:each="tne : ${elementos}" th:if="${tne.elemento.eleCodigo == 16}">
+            <div class="r-grid r-nut">
+                <span class="rn">Sódio (mg)</span>
+                <span class="rv" th:text="${#numbers.formatInteger(T(java.lang.Math).round(tne.tneValorPadrao), 1)}">—</span>
+                <span class="rv" th:text="${#numbers.formatInteger(T(java.lang.Math).round(tne.tneValor), 1)}">—</span>
+                <span class="rvd" th:text="${tne.tneVD > 0} ? ${#numbers.formatInteger(T(java.lang.Math).round(tne.tneVD), 1)} + '%' : '**'">**</span>
+            </div>
+        </th:block>
+
+        <div th:if="${#lists.isEmpty(elementos)}" class="r-vazio">
+            Nenhum nutriente cadastrado para esta tabela.
+        </div>
+
+        <div class="r-rodape">
+            * Percentual de Valores Diários fornecidos pela porção.<br>
+            ** VD não estabelecido.<br>
+            N.D. Não disponível na base de dados utilizada (TBCA).<br>
+            Valores Diários de referência com base em uma dieta de 2000 kcal ou 8400 kJ.
+        </div>
+
+    </div>
     </div>
 
-    <div class="r-divisor-grosso"></div>
-
-    <div class="r-header-colunas">
-        <span>Quantidade por porção</span>
-        <span>%VD*</span>
-    </div>
-
-    <!-- Valor Energético -->
-    <div class="r-energia-bloco">
-        <span class="r-energia-label">Valor Energético</span>
-        <span class="r-energia-valor">
-            <span th:text="${tabela.tabValorEnergeticoPorcao}">—</span> kcal
-        </span>
-        <span class="r-energia-vd">
-            <strong th:text="${tabela.tabVD != null and tabela.tabVD > 0 ? tabela.tabVD + '%' : '**'}">**</strong>
-        </span>
-    </div>
-
-    <div class="r-divisor-medio"></div>
-
-    <!--
-        Nutrientes: iteramos sobre ${elementos} (List<TabNutElemento>)
-        carregado pelo controller com @Transactional.
-        th:each funciona com qualquer Iterable — não usa #lists.isEmpty().
-        O bloco "vazio" usa th:if="${elementosVazios}" (boolean do controller).
-    -->
-    <div th:each="tne : ${elementos}" class="r-nutriente">
-        <span class="r-nome">
-            <strong th:text="${tne.elemento.eleNome}">Nutriente</strong>
-        </span>
-        <span class="r-valor" th:text="${tne.tneValor}">0</span>
-        <span class="r-vd"
-              th:text="${tne.tneVD > 0 ? tne.tneVD + '%' : '**'}">**</span>
-    </div>
-
-    <!-- Exibido apenas se o controller setou elementosVazios=true -->
-    <div th:if="${elementosVazios}" class="r-vazio">
-        Nenhum nutriente cadastrado para esta tabela.
-    </div>
-
-    <div class="r-rodape">
-        * Percentual de Valores Diários fornecidos pela porção.<br>
-        ** VD não estabelecido.<br>
-        Valores Diários de referência com base em uma dieta de 2000 kcal ou 8400 kJ.
-        Seus valores diários podem ser maiores ou menores dependendo de suas
-        necessidades energéticas.
+    <div class="mt-4 d-flex gap-2">
+        <a th:href="@{/tabela}" class="btn btn-secondary">Voltar</a>
+        <a th:href="@{/tabela/gerar-pdf/{id}(id=${tabela.tabCodigo})}" class="btn btn-primary">Gerar PDF</a>
     </div>
 
 </div>
-
-<div class="mt-4 d-flex gap-2">
-    <a th:href="@{/tabela}" class="btn btn-secondary">Voltar</a>
-    <a th:href="@{/tabela/gerar-pdf/{id}(id=${tabela.tabCodigo})}"
-       class="btn btn-primary">Gerar PDF</a>
 </div>
 
+<div th:replace="~{rodape :: rodape}"></div>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
